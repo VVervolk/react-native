@@ -59,11 +59,10 @@ export default function RegistrationScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: 375,
-    minWidth: 300,
+    minWidth: 350,
   },
   image: {
     flex: 1,
@@ -79,12 +78,11 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   substrate: {
-    height: 549,
     backgroundColor: "white",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     paddingTop: 92,
-    paddingBottom: 78,
+    paddingBottom: 32,
     paddingHorizontal: 16,
   },
   avatar: {
