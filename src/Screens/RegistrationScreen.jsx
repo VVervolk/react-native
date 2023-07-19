@@ -1,5 +1,4 @@
 import {
-  Image,
   ImageBackground,
   Pressable,
   StyleSheet,
@@ -8,9 +7,15 @@ import {
   View,
 } from "react-native";
 import Background from "../images/background.jpg";
-import Plus from "../images/add.png";
+import { AntDesign } from "@expo/vector-icons";
+import { useState } from "react";
 
 export default function RegistrationScreen() {
+  const [isPressed, setIsPressed] = useState(false);
+  const [isFocusedLogin, setIsFocusedLogin] = useState(false);
+  const [isFocusedEmail, setIsFocusedEmail] = useState(false);
+  const [isFocusedPass, setIsFocusedPass] = useState(false);
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -21,34 +26,80 @@ export default function RegistrationScreen() {
         <View style={styles.substrate}>
           <View style={styles.avatar}>
             <Pressable style={styles.addAvatarButton}>
-              <Image source={Plus} style={styles.addAvatarButtonIcon} />
+              <AntDesign name="pluscircleo" size={25} color="#FF6C00" />
             </Pressable>
           </View>
           <Text style={styles.title}>Реєстрація</Text>
           <View style={styles.form}>
             <TextInput
               inputMode="text"
-              style={styles.input}
+              style={[
+                styles.input,
+                {
+                  borderColor: isFocusedLogin ? "#FF6C00" : "#E8E8E8",
+                  backgroundColor: isFocusedLogin ? "white" : "#F6F6F6",
+                },
+              ]}
               placeholder="Логін"
-            ></TextInput>
+              onFocus={() => setIsFocusedLogin(true)}
+              onBlur={() => setIsFocusedLogin(false)}
+            />
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                {
+                  borderColor: isFocusedEmail ? "#FF6C00" : "#E8E8E8",
+                  backgroundColor: isFocusedEmail ? "white" : "#F6F6F6",
+                },
+              ]}
               inputMode="email"
               placeholder="Адреса електронної пошти"
-            ></TextInput>
+              onFocus={() => setIsFocusedEmail(true)}
+              onBlur={() => setIsFocusedEmail(false)}
+            />
             <View>
               <TextInput
                 inputMode="text"
-                style={styles.input}
+                style={[
+                  styles.input,
+                  {
+                    borderColor: isFocusedPass ? "#FF6C00" : "#E8E8E8",
+                    backgroundColor: isFocusedPass ? "white" : "#F6F6F6",
+                  },
+                ]}
                 placeholder="Пароль"
-              ></TextInput>
+                secureTextEntry={true}
+                onFocus={() => setIsFocusedPass(true)}
+                onBlur={() => setIsFocusedPass(false)}
+              />
               <Pressable style={styles.passwordButton}>
                 <Text style={styles.passwordButtonText}>Показати</Text>
               </Pressable>
             </View>
           </View>
-          <Pressable style={styles.submitButton}>
-            <Text style={styles.submitButtonText}>Зареєстуватися</Text>
+          <Pressable
+            style={({ pressed }) => [
+              {
+                backgroundColor: pressed ? "white" : "#FF6C00",
+                borderColor: pressed ? "#FF6C00" : "white",
+              },
+              styles.submitButton,
+            ]}
+            onPressIn={() => {
+              setIsPressed(true);
+            }}
+            onPressOut={() => {
+              setIsPressed(false);
+            }}
+          >
+            <Text
+              style={[
+                styles.submitButtonText,
+                { color: isPressed ? "#FF6C00" : "white" },
+              ]}
+            >
+              Зареєстуватися
+            </Text>
           </Pressable>
           <Pressable style={styles.loginLink}>
             <Text style={styles.loginLinkText}>Вже є акаунт? Увійти</Text>
@@ -63,6 +114,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     minWidth: 350,
+    width: "100%",
   },
   image: {
     flex: 1,
@@ -88,26 +140,22 @@ export const styles = StyleSheet.create({
   avatar: {
     position: "absolute",
     top: -60,
-    left: 128,
+    left: "50%",
+    transform: [{ translateX: -50 }],
     width: 120,
     height: 120,
     backgroundColor: "#F6F6F6",
     borderRadius: 16,
   },
   addAvatarButton: { position: "absolute", bottom: 14, right: -12 },
-  addAvatarButtonIcon: {
-    width: 25,
-    height: 25,
-  },
+
   form: {
     gap: 16,
     paddingBottom: 43,
   },
   input: {
     height: 50,
-    backgroundColor: "#F6F6F6",
     padding: 16,
-    borderColor: "#E8E8E8",
     borderWidth: 1,
     borderRadius: 8,
   },
@@ -124,16 +172,15 @@ export const styles = StyleSheet.create({
   },
   submitButton: {
     height: 51,
-    backgroundColor: "#FF6C00",
     borderRadius: 100,
     justifyContent: "center",
     marginBottom: 16,
+    borderWidth: 2,
   },
   submitButtonText: {
     fontSize: 16,
     textAlign: "center",
     fontFamily: "Roboto",
-    color: "white",
   },
   loginLinkText: {
     fontSize: 16,
