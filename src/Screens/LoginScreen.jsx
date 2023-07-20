@@ -1,5 +1,4 @@
 import {
-  ImageBackground,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -10,69 +9,54 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import Background from "../images/background.jpg";
 import { styles } from "./RegistrationScreen";
 import { useReducer, useState } from "react";
-
-function reducer(state, action) {
-  switch (action.type) {
-    case "input_email": {
-      return {
-        ...state,
-        email: action.email,
-      };
-    }
-    case "input_password": {
-      return {
-        ...state,
-        password: action.password,
-      };
-    }
-    default: {
-      return state;
-    }
-  }
-}
+import Container from "../components/Container";
+import Background from "../components/Background";
+import Title from "../components/Title";
+import ShowPassword from "../components/ShowPassword";
+import SubmitButton from "../components/SubmitButton";
+import Form from "../components/Form";
+import formReducer from "../reducers/formReducer";
 
 export default function LoginScreen() {
-  const [isPressed, setIsPressed] = useState(false);
   const [isFocusedEmail, setIsFocusedEmail] = useState(false);
   const [isFocusedPass, setIsFocusedPass] = useState(false);
-  const [state, dispatch] = useReducer(reducer, {
+  const [shouldHide, setShouldHide] = useState(true);
+  const [state, dispatch] = useReducer(formReducer, {
     email: null,
     password: null,
   });
 
-  const onLog = () => console.log(state);
+  const onLog = () => {
+    console.log(state);
+    dispatch({ type: "reset" });
+  };
+
+  const toggleHidePassword = () => {
+    if (shouldHide) {
+      setShouldHide(false);
+    } else {
+      setShouldHide(true);
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <ImageBackground
-          source={Background}
-          resizeMode="cover"
-          style={styles.image}
-        >
-          <View
-            style={[styles.substrate, { paddingTop: 32, paddingBottom: 144 }]}
-          >
-            <Text style={styles.title}>Увійти</Text>
+      <Container>
+        <Background>
+          <View style={[styles.substrate, loginStyles.substrateLogin]}>
+            <Title>Увійти</Title>
             <KeyboardAvoidingView
               behavior={Platform.OS == "ios" ? "padding" : "height"}
             >
-              <View style={styles.form}>
+              <Form>
                 <TextInput
                   value={state.email}
                   onChangeText={(e) =>
                     dispatch({ type: "input_email", email: e })
                   }
-                  style={[
-                    styles.input,
-                    {
-                      borderColor: isFocusedEmail ? "#FF6C00" : "#E8E8E8",
-                      backgroundColor: isFocusedEmail ? "white" : "#F6F6F6",
-                    },
-                  ]}
+                  style={[styles.input, isFocusedEmail && styles.inputFocused]}
                   inputMode="email"
                   placeholder="Адреса електронної пошти"
                   onFocus={() => setIsFocusedEmail(true)}
@@ -86,50 +70,24 @@ export default function LoginScreen() {
                       dispatch({ type: "input_password", password: e })
                     }
                     inputMode="text"
-                    style={[
-                      styles.input,
-                      {
-                        borderColor: isFocusedPass ? "#FF6C00" : "#E8E8E8",
-                        backgroundColor: isFocusedPass ? "white" : "#F6F6F6",
-                      },
-                    ]}
+                    style={[styles.input, isFocusedPass && styles.inputFocused]}
                     placeholder="Пароль"
-                    secureTextEntry={true}
+                    secureTextEntry={shouldHide}
                     onFocus={() => setIsFocusedPass(true)}
                     onBlur={() => setIsFocusedPass(false)}
                   />
-                  <Pressable style={styles.passwordButton}>
-                    <Text style={styles.passwordButtonText}>Показати</Text>
-                  </Pressable>
+                  <ShowPassword
+                    onPress={() => {
+                      toggleHidePassword();
+                    }}
+                  >
+                    {shouldHide ? "Показати" : "Скрити"}
+                  </ShowPassword>
                 </View>
-              </View>
+              </Form>
             </KeyboardAvoidingView>
 
-            <Pressable
-              style={({ pressed }) => [
-                {
-                  backgroundColor: pressed ? "white" : "#FF6C00",
-                  borderColor: pressed ? "#FF6C00" : "white",
-                },
-                styles.submitButton,
-              ]}
-              onPressIn={() => {
-                setIsPressed(true);
-              }}
-              onPressOut={() => {
-                setIsPressed(false);
-              }}
-              onPress={onLog}
-            >
-              <Text
-                style={[
-                  styles.submitButtonText,
-                  { color: isPressed ? "#FF6C00" : "white" },
-                ]}
-              >
-                Увійти
-              </Text>
-            </Pressable>
+            <SubmitButton onPress={onLog}>Увійти</SubmitButton>
             <Pressable style={loginStyles.loginLink}>
               <Text style={styles.loginLinkText}>Немає акаунту?</Text>
               <Text
@@ -142,13 +100,17 @@ export default function LoginScreen() {
               </Text>
             </Pressable>
           </View>
-        </ImageBackground>
-      </View>
+        </Background>
+      </Container>
     </TouchableWithoutFeedback>
   );
 }
 
 const loginStyles = StyleSheet.create({
+  substrateLogin: {
+    paddingTop: 32,
+    paddingBottom: 144,
+  },
   loginLink: {
     display: "flex",
     flexDirection: "row",

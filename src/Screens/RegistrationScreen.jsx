@@ -1,5 +1,4 @@
 import {
-  ImageBackground,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -10,81 +9,62 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import Background from "../images/background.jpg";
 import { AntDesign } from "@expo/vector-icons";
 import { useReducer, useState } from "react";
-
-function reducer(state, action) {
-  switch (action.type) {
-    case "input_login": {
-      return {
-        ...state,
-        login: action.login,
-      };
-    }
-    case "input_email": {
-      return {
-        ...state,
-        email: action.email,
-      };
-    }
-    case "input_password": {
-      return {
-        ...state,
-        password: action.password,
-      };
-    }
-    default: {
-      return state;
-    }
-  }
-}
+import Container from "../components/Container";
+import Background from "../components/Background/Background";
+import Title from "../components/Title";
+import ShowPassword from "../components/ShowPassword";
+import SubmitButton from "../components/SubmitButton";
+import Form from "../components/Form";
+import formReducer from "../reducers/formReducer";
 
 export default function RegistrationScreen() {
-  const [isPressed, setIsPressed] = useState(false);
   const [isFocusedLogin, setIsFocusedLogin] = useState(false);
   const [isFocusedEmail, setIsFocusedEmail] = useState(false);
   const [isFocusedPass, setIsFocusedPass] = useState(false);
-  const [state, dispatch] = useReducer(reducer, {
+  const [shouldHide, setShouldHide] = useState(true);
+  const [state, dispatch] = useReducer(formReducer, {
     login: null,
     email: null,
     password: null,
   });
 
-  const onReg = () => console.log(state);
+  const onReg = () => {
+    console.log(state);
+    dispatch({ type: "reset" });
+  };
+
+  const toggleHidePassword = () => {
+    if (shouldHide) {
+      setShouldHide(false);
+    } else {
+      setShouldHide(true);
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <ImageBackground
-          source={Background}
-          resizeMode="cover"
-          style={styles.image}
-        >
+      <Container>
+        <Background>
           <View style={styles.substrate}>
             <View style={styles.avatar}>
               <Pressable style={styles.addAvatarButton}>
                 <AntDesign name="pluscircleo" size={25} color="#FF6C00" />
               </Pressable>
             </View>
-            <Text style={styles.title}>Реєстрація</Text>
+            <Title>Реєстрація</Title>
             <KeyboardAvoidingView
               behavior={Platform.OS == "ios" ? "padding" : "height"}
             >
-              <View style={styles.form}>
+              <Form>
                 <TextInput
                   value={state.login}
                   onChangeText={(e) =>
                     dispatch({ type: "input_login", login: e })
                   }
                   inputMode="text"
-                  style={[
-                    styles.input,
-                    {
-                      borderColor: isFocusedLogin ? "#FF6C00" : "#E8E8E8",
-                      backgroundColor: isFocusedLogin ? "white" : "#F6F6F6",
-                    },
-                  ]}
+                  style={[styles.input, isFocusedLogin && styles.inputFocused]}
                   placeholder="Логін"
                   onFocus={() => setIsFocusedLogin(true)}
                   onBlur={() => setIsFocusedLogin(false)}
@@ -94,13 +74,7 @@ export default function RegistrationScreen() {
                   onChangeText={(e) =>
                     dispatch({ type: "input_email", email: e })
                   }
-                  style={[
-                    styles.input,
-                    {
-                      borderColor: isFocusedEmail ? "#FF6C00" : "#E8E8E8",
-                      backgroundColor: isFocusedEmail ? "white" : "#F6F6F6",
-                    },
-                  ]}
+                  style={[styles.input, isFocusedEmail && styles.inputFocused]}
                   inputMode="email"
                   placeholder="Адреса електронної пошти"
                   onFocus={() => setIsFocusedEmail(true)}
@@ -113,78 +87,34 @@ export default function RegistrationScreen() {
                       dispatch({ type: "input_password", password: e })
                     }
                     inputMode="text"
-                    style={[
-                      styles.input,
-                      {
-                        borderColor: isFocusedPass ? "#FF6C00" : "#E8E8E8",
-                        backgroundColor: isFocusedPass ? "white" : "#F6F6F6",
-                      },
-                    ]}
+                    style={[styles.input, isFocusedPass && styles.inputFocused]}
                     placeholder="Пароль"
-                    secureTextEntry={true}
+                    secureTextEntry={shouldHide}
                     onFocus={() => setIsFocusedPass(true)}
                     onBlur={() => setIsFocusedPass(false)}
                   />
-                  <Pressable style={styles.passwordButton}>
-                    <Text style={styles.passwordButtonText}>Показати</Text>
-                  </Pressable>
+                  <ShowPassword
+                    onPress={() => {
+                      toggleHidePassword();
+                    }}
+                  >
+                    {shouldHide ? "Показати" : "Скрити"}
+                  </ShowPassword>
                 </View>
-              </View>
+              </Form>
             </KeyboardAvoidingView>
-            <Pressable
-              style={({ pressed }) => [
-                {
-                  backgroundColor: pressed ? "white" : "#FF6C00",
-                  borderColor: pressed ? "#FF6C00" : "white",
-                },
-                styles.submitButton,
-              ]}
-              onPressIn={() => {
-                setIsPressed(true);
-              }}
-              onPressOut={() => {
-                setIsPressed(false);
-              }}
-              onPress={onReg}
-            >
-              <Text
-                style={[
-                  styles.submitButtonText,
-                  { color: isPressed ? "#FF6C00" : "white" },
-                ]}
-              >
-                Зареєстуватися
-              </Text>
-            </Pressable>
-            <Pressable style={styles.loginLink}>
+            <SubmitButton onPress={onReg}>Зареєстуватися</SubmitButton>
+            <Pressable>
               <Text style={styles.loginLinkText}>Вже є акаунт? Увійти</Text>
             </Pressable>
           </View>
-        </ImageBackground>
-      </View>
+        </Background>
+      </Container>
     </TouchableWithoutFeedback>
   );
 }
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    minWidth: 350,
-    width: "100%",
-  },
-  image: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  title: {
-    color: "#212121",
-    fontSize: 30,
-    lineHeight: 35,
-    fontWeight: 500,
-    textAlign: "center",
-    fontFamily: "Roboto",
-    marginBottom: 32,
-  },
   substrate: {
     backgroundColor: "white",
     borderTopLeftRadius: 25,
@@ -205,39 +135,19 @@ export const styles = StyleSheet.create({
   },
   addAvatarButton: { position: "absolute", bottom: 14, right: -12 },
 
-  form: {
-    gap: 16,
-    paddingBottom: 43,
-  },
   input: {
     height: 50,
     padding: 16,
     borderWidth: 1,
     borderRadius: 8,
+    borderColor: "#E8E8E8",
+    backgroundColor: "#F6F6F6",
   },
-  passwordButton: {
-    position: "absolute",
-    top: 16,
-    right: 16,
+  inputFocused: {
+    borderColor: "#FF6C00",
+    backgroundColor: "white",
   },
-  passwordButtonText: {
-    color: "#1B4371",
-    fontFamily: "Roboto",
-    fontSize: 16,
-    lineHeight: 18.75,
-  },
-  submitButton: {
-    height: 51,
-    borderRadius: 100,
-    justifyContent: "center",
-    marginBottom: 16,
-    borderWidth: 2,
-  },
-  submitButtonText: {
-    fontSize: 16,
-    textAlign: "center",
-    fontFamily: "Roboto",
-  },
+
   loginLinkText: {
     fontSize: 16,
     color: "#1B4371",
