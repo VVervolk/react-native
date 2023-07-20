@@ -18,6 +18,8 @@ import ShowPassword from "../components/ShowPassword";
 import SubmitButton from "../components/SubmitButton";
 import Form from "../components/Form";
 import formReducer from "../reducers/formReducer";
+import { useNavigation } from "@react-navigation/native";
+import toggleHidePassword from "../helpers/toggleHidePassword";
 
 export default function LoginScreen() {
   const [isFocusedEmail, setIsFocusedEmail] = useState(false);
@@ -27,18 +29,12 @@ export default function LoginScreen() {
     email: null,
     password: null,
   });
+  const navigation = useNavigation();
 
   const onLog = () => {
     console.log(state);
     dispatch({ type: "reset" });
-  };
-
-  const toggleHidePassword = () => {
-    if (shouldHide) {
-      setShouldHide(false);
-    } else {
-      setShouldHide(true);
-    }
+    navigation.navigate("Home");
   };
 
   return (
@@ -78,7 +74,7 @@ export default function LoginScreen() {
                   />
                   <ShowPassword
                     onPress={() => {
-                      toggleHidePassword();
+                      toggleHidePassword(shouldHide, setShouldHide);
                     }}
                   >
                     {shouldHide ? "Показати" : "Скрити"}
@@ -88,13 +84,14 @@ export default function LoginScreen() {
             </KeyboardAvoidingView>
 
             <SubmitButton onPress={onLog}>Увійти</SubmitButton>
-            <Pressable style={loginStyles.loginLink}>
+            <Pressable style={styles.loginLink}>
               <Text style={styles.loginLinkText}>Немає акаунту?</Text>
               <Text
                 style={[
                   styles.loginLinkText,
                   loginStyles.loginLinkTextUnderline,
                 ]}
+                onPress={() => navigation.navigate("Registration")}
               >
                 Зареєструватися
               </Text>
@@ -111,12 +108,7 @@ const loginStyles = StyleSheet.create({
     paddingTop: 32,
     paddingBottom: 144,
   },
-  loginLink: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 4,
-  },
+
   loginLinkTextUnderline: {
     textDecorationLine: "underline",
   },

@@ -18,6 +18,8 @@ import ShowPassword from "../components/ShowPassword";
 import SubmitButton from "../components/SubmitButton";
 import Form from "../components/Form";
 import formReducer from "../reducers/formReducer";
+import { useNavigation } from "@react-navigation/native";
+import toggleHidePassword from "../helpers/toggleHidePassword";
 
 export default function RegistrationScreen() {
   const [isFocusedLogin, setIsFocusedLogin] = useState(false);
@@ -29,18 +31,12 @@ export default function RegistrationScreen() {
     email: null,
     password: null,
   });
+  const navigation = useNavigation();
 
   const onReg = () => {
     console.log(state);
     dispatch({ type: "reset" });
-  };
-
-  const toggleHidePassword = () => {
-    if (shouldHide) {
-      setShouldHide(false);
-    } else {
-      setShouldHide(true);
-    }
+    navigation.navigate("Home");
   };
 
   return (
@@ -95,7 +91,7 @@ export default function RegistrationScreen() {
                   />
                   <ShowPassword
                     onPress={() => {
-                      toggleHidePassword();
+                      toggleHidePassword(shouldHide, setShouldHide);
                     }}
                   >
                     {shouldHide ? "Показати" : "Скрити"}
@@ -104,8 +100,14 @@ export default function RegistrationScreen() {
               </Form>
             </KeyboardAvoidingView>
             <SubmitButton onPress={onReg}>Зареєстуватися</SubmitButton>
-            <Pressable>
-              <Text style={styles.loginLinkText}>Вже є акаунт? Увійти</Text>
+            <Pressable style={styles.loginLink}>
+              <Text style={styles.loginLinkText}>Вже є акаунт?</Text>
+              <Text
+                onPress={() => navigation.navigate("Login")}
+                style={styles.loginLinkText}
+              >
+                Увійти
+              </Text>
             </Pressable>
           </View>
         </Background>
@@ -120,7 +122,7 @@ export const styles = StyleSheet.create({
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     paddingTop: 92,
-    paddingBottom: 32,
+    paddingBottom: 78,
     paddingHorizontal: 16,
   },
   avatar: {
@@ -146,6 +148,12 @@ export const styles = StyleSheet.create({
   inputFocused: {
     borderColor: "#FF6C00",
     backgroundColor: "white",
+  },
+  loginLink: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 4,
   },
 
   loginLinkText: {
