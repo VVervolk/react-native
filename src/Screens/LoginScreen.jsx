@@ -39,72 +39,84 @@ export default function LoginScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <Container>
-        <Background>
-          <View style={[styles.substrate, loginStyles.substrateLogin]}>
-            <Title>Увійти</Title>
-            <KeyboardAvoidingView
-              behavior={Platform.OS == "ios" ? "padding" : "height"}
-            >
-              <Form>
-                <TextInput
-                  value={state.email}
-                  onChangeText={(e) =>
-                    dispatch({ type: "input_email", email: e })
-                  }
-                  style={[styles.input, isFocusedEmail && styles.inputFocused]}
-                  inputMode="email"
-                  placeholder="Адреса електронної пошти"
-                  onFocus={() => setIsFocusedEmail(true)}
-                  onBlur={() => setIsFocusedEmail(false)}
-                />
-
-                <View>
-                  <TextInput
-                    value={state.password}
-                    onChangeText={(e) =>
-                      dispatch({ type: "input_password", password: e })
-                    }
-                    inputMode="text"
-                    style={[styles.input, isFocusedPass && styles.inputFocused]}
-                    placeholder="Пароль"
-                    secureTextEntry={shouldHide}
-                    onFocus={() => setIsFocusedPass(true)}
-                    onBlur={() => setIsFocusedPass(false)}
-                  />
-                  <ShowPassword
-                    onPress={() => {
-                      toggleHidePassword(shouldHide, setShouldHide);
-                    }}
-                  >
-                    {shouldHide ? "Показати" : "Скрити"}
-                  </ShowPassword>
-                </View>
-              </Form>
-            </KeyboardAvoidingView>
-
-            <SubmitButton onPress={onLog}>Увійти</SubmitButton>
-            <Pressable style={styles.loginLink}>
-              <Text style={styles.loginLinkText}>Немає акаунту?</Text>
-              <Text
-                style={[
-                  styles.loginLinkText,
-                  loginStyles.loginLinkTextUnderline,
-                ]}
-                onPress={() => navigation.navigate("Registration")}
+      <View style={styles.interlayer}>
+        <Container>
+          <Background>
+            <View style={loginStyles.substrateLogin}>
+              <Title>Увійти</Title>
+              <KeyboardAvoidingView
+                behavior={Platform.OS == "ios" ? "padding" : "height"}
               >
-                Зареєструватися
-              </Text>
-            </Pressable>
-          </View>
-        </Background>
-      </Container>
+                <Form>
+                  <TextInput
+                    value={state.email}
+                    onChangeText={(e) =>
+                      dispatch({ type: "input_email", email: e })
+                    }
+                    style={[
+                      styles.input,
+                      isFocusedEmail && styles.inputFocused,
+                    ]}
+                    inputMode="email"
+                    placeholder="Адреса електронної пошти"
+                    onFocus={() => setIsFocusedEmail(true)}
+                    onBlur={() => setIsFocusedEmail(false)}
+                  />
+
+                  <View>
+                    <TextInput
+                      value={state.password}
+                      onChangeText={(e) =>
+                        dispatch({ type: "input_password", password: e })
+                      }
+                      inputMode="text"
+                      style={[
+                        styles.input,
+                        isFocusedPass && styles.inputFocused,
+                      ]}
+                      placeholder="Пароль"
+                      secureTextEntry={shouldHide}
+                      onFocus={() => setIsFocusedPass(true)}
+                      onBlur={() => setIsFocusedPass(false)}
+                    />
+                    <ShowPassword
+                      onPress={() => {
+                        toggleHidePassword(shouldHide, setShouldHide);
+                      }}
+                    >
+                      {shouldHide ? "Показати" : "Скрити"}
+                    </ShowPassword>
+                  </View>
+                </Form>
+              </KeyboardAvoidingView>
+
+              <SubmitButton onPress={onLog}>Увійти</SubmitButton>
+              <Pressable style={styles.loginLink}>
+                <Text style={styles.loginLinkText}>Немає акаунту?</Text>
+                <Text
+                  style={[
+                    styles.loginLinkText,
+                    loginStyles.loginLinkTextUnderline,
+                  ]}
+                  onPress={() => navigation.navigate("Registration")}
+                >
+                  Зареєструватися
+                </Text>
+              </Pressable>
+            </View>
+          </Background>
+        </Container>
+      </View>
     </TouchableWithoutFeedback>
   );
 }
 
 const loginStyles = StyleSheet.create({
   substrateLogin: {
+    backgroundColor: "white",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    paddingHorizontal: 16,
     paddingTop: 32,
     paddingBottom: 144,
   },

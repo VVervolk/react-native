@@ -1,5 +1,5 @@
 import { ImageBackground, StyleSheet } from "react-native";
-import BackgroundImage from "../../images/background.jpg";
+import BackgroundImage from "../images/background.jpg";
 
 export default function Background({ children }) {
   return (
