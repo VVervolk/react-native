@@ -1,3 +1,11 @@
+import { Text, View } from "react-native";
+
 export default function PostsScreen() {
-  return;
+  return (
+    <>
+      <View>
+        <Text>dsfsd</Text>
+      </View>
+    </>
+  );
 }
