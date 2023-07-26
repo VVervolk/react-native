@@ -1,4 +1,10 @@
-import { Platform, Pressable, SafeAreaView, View } from "react-native";
+import {
+  Platform,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  View,
+} from "react-native";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import Background from "../../components/Background";
 import Title from "../../components/Title";
@@ -34,27 +40,26 @@ export default function RegistrationScreen() {
   return (
     <Container>
       <Background>
-        <View style={styles.substrateRegister}>
-          <View style={styles.avatar}>
-            <Pressable style={styles.addAvatarButton}>
-              <Feather name="x-circle" size={25} color="#BDBDBD" />
+        <ScrollView>
+          <View style={[styles.substrateRegister, { marginTop: 100 }]}>
+            <View style={styles.avatar}>
+              <Pressable style={styles.addAvatarButton}>
+                <Feather name="x-circle" size={25} color="#BDBDBD" />
+              </Pressable>
+            </View>
+            <Pressable
+              onPress={() => onLogOut()}
+              style={stylesProfile.logOutButton}
+            >
+              <MaterialIcons name="logout" size={25} color="#BDBDBD" />
             </Pressable>
-          </View>
-          <Pressable
-            onPress={() => onLogOut()}
-            style={stylesProfile.logOutButton}
-          >
-            <MaterialIcons name="logout" size={25} color="#BDBDBD" />
-          </Pressable>
-          <View style={{ maxHeight: 200 }}>
+
             <Title>Natali Romanova</Title>
-            <FlatList
-              data={DATA}
-              renderItem={({ item }) => <Post title={item.title} />}
-              keyExtractor={(item) => item.id}
-            />
+            {DATA.length === 1
+              ? "No posts yet"
+              : DATA.map((item) => <Post key={item.id} />)}
           </View>
-        </View>
+        </ScrollView>
       </Background>
     </Container>
   );

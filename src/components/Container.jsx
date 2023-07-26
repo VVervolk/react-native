@@ -7,7 +7,6 @@ export default function Container({ children }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    minWidth: 350,
     width: "100%",
   },
 });

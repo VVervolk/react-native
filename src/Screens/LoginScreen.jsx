@@ -34,7 +34,10 @@ export default function LoginScreen() {
   const onLog = () => {
     console.log(state);
     dispatch({ type: "reset" });
-    navigation.navigate("Home");
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Home" }],
+    });
   };
 
   return (

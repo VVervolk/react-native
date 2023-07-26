@@ -2,16 +2,12 @@ import { Text } from "react-native";
 import { Image, StyleSheet, View } from "react-native";
 import { Feather, AntDesign, SimpleLineIcons } from "@expo/vector-icons";
 import { Pressable } from "react-native";
+import Example from "../images/example.jpg";
 
-export default function Post({ item }) {
+export default function Post() {
   return (
     <View style={styles.box}>
-      <Image
-        style={styles.image}
-        source={{
-          uri: "https://images.pexels.com/photos/6401669/pexels-photo-6401669.jpeg",
-        }}
-      />
+      <Image style={styles.image} source={Example} />
       <Text style={styles.title}>Ліс</Text>
       <View style={styles.buttonsBox}>
         <View style={styles.activityBox}>
