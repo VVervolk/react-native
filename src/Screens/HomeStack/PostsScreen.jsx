@@ -48,7 +48,6 @@ export default function PostsScreen() {
   return (
     <>
       <ScrollView style={styles.container}>
-        <Text>dsfsd</Text>
         {users.length !== 1 &&
           users.map((user) => <UserPosts key={user.id} user={user} />)}
       </ScrollView>

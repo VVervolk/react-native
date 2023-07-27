@@ -3,15 +3,21 @@ import { Image, StyleSheet, View } from "react-native";
 import { Feather, AntDesign, SimpleLineIcons } from "@expo/vector-icons";
 import { Pressable } from "react-native";
 import Example from "../images/example.jpg";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Post() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.box}>
       <Image style={styles.image} source={Example} />
       <Text style={styles.title}>Ліс</Text>
       <View style={styles.buttonsBox}>
         <View style={styles.activityBox}>
-          <Pressable style={styles.button}>
+          <Pressable
+            style={styles.button}
+            onPress={() => navigation.navigate("Comments")}
+          >
             <Feather name="message-circle" size={24} color="#FF6C00" />
             <Text>8</Text>
           </Pressable>
@@ -44,6 +50,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 500,
     color: "#212121",
+    marginBottom: 8,
   },
   button: {
     display: "flex",

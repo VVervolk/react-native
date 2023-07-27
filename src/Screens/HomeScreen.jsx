@@ -23,7 +23,7 @@ export default function HomeScreen() {
       backBehavior="none"
       screenOptions={({ route }) => ({
         headerLeft: () => {
-          if (route.name === "CreatePosts") {
+          if (route.name === "CreatePosts" || route.name === "Comments") {
             return (
               <Pressable
                 style={{ marginLeft: 16 }}
@@ -122,6 +122,17 @@ export default function HomeScreen() {
         options={{ headerShown: false }}
         name="Profile"
         component={ProfileScreen}
+      />
+      <Tabs.Screen
+        name="Comments"
+        component={CommentsScreen}
+        options={() => ({
+          title: "Коментарі",
+          tabBarButton: () => null,
+          tabBarStyle: {
+            display: "none",
+          },
+        })}
       />
     </Tabs.Navigator>
   );
