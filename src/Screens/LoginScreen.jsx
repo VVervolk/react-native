@@ -20,6 +20,9 @@ import Form from "../components/Form";
 import formReducer from "../reducers/formReducer";
 import { useNavigation } from "@react-navigation/native";
 import toggleHidePassword from "../helpers/toggleHidePassword";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../redux/operations";
+import { user } from "../firebase/auth";
 
 export default function LoginScreen() {
   const [isFocusedEmail, setIsFocusedEmail] = useState(false);
@@ -30,15 +33,21 @@ export default function LoginScreen() {
     password: null,
   });
   const navigation = useNavigation();
+  // const dispatchSlice = useDispatch();
 
-  const onLog = () => {
-    console.log(state);
-    dispatch({ type: "reset" });
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "BottomNavіgator" }],
-    });
-  };
+  async function onLog() {
+    try {
+      // await dispatchSlice(loginUser(state));
+      dispatch({ type: "reset" });
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "BottomNavіgator" }],
+      });
+      console.log(state);
+    } catch (error) {}
+  }
+
+  // console.log(user?.email);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

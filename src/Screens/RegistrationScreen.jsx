@@ -20,6 +20,8 @@ import Form from "../components/Form";
 import formReducer from "../reducers/formReducer";
 import { useNavigation } from "@react-navigation/native";
 import toggleHidePassword from "../helpers/toggleHidePassword";
+import { useDispatch } from "react-redux";
+import { registerUser } from "../redux/operations";
 
 export default function RegistrationScreen() {
   const [isFocusedLogin, setIsFocusedLogin] = useState(false);
@@ -32,15 +34,19 @@ export default function RegistrationScreen() {
     password: null,
   });
   const navigation = useNavigation();
+  const dispatchSlice = useDispatch();
 
-  const onReg = () => {
-    console.log(state);
-    dispatch({ type: "reset" });
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "BottomNavіgator" }],
-    });
-  };
+  async function onReg() {
+    try {
+      // await dispatchSlice(registerUser(state));
+      dispatch({ type: "reset" });
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "BottomNavіgator" }],
+      });
+      console.log(state);
+    } catch (error) {}
+  }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

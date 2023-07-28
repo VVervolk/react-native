@@ -1,7 +1,8 @@
 import { ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
-import { Text, View } from "react-native";
 import UserPosts from "../../components/UserPosts";
+// import { useSelector } from "react-redux";
+// import { selectUser } from "../../redux/selectors";
 
 const users = [
   {
@@ -45,6 +46,8 @@ const users = [
 ];
 
 export default function PostsScreen() {
+  // const userData = useSelector(selectUser);
+  // console.log(userData);
   return (
     <>
       <ScrollView style={styles.container}>
