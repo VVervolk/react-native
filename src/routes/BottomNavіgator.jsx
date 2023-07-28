@@ -1,9 +1,8 @@
-import { createStackNavigator } from "@react-navigation/stack";
-import PostsScreen from "./HomeStack/PostsScreen";
-import CreatePostsScreen from "./HomeStack/CreatePostsScreen";
-import CommentsScreen from "./HomeStack/CommentsScreen";
-import ProfileScreen from "./HomeStack/ProfileScreen";
-import MapScreen from "./HomeStack/MapScreen";
+import PostsScreen from "../Screens/BottomNavіgatorStack/PostsScreen";
+import CreatePostsScreen from "../Screens/BottomNavіgatorStack/CreatePostsScreen";
+import CommentsScreen from "../Screens/BottomNavіgatorStack/CommentsScreen";
+import ProfileScreen from "../Screens/BottomNavіgatorStack/ProfileScreen";
+import MapScreen from "../Screens/BottomNavіgatorStack/MapScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, TouchableOpacity } from "react-native";
@@ -14,7 +13,7 @@ import { Platform } from "react-native";
 
 const Tabs = createBottomTabNavigator();
 
-export default function HomeScreen() {
+export default function BottomNavіgator() {
   const navigation = useNavigation();
 
   return (
@@ -60,7 +59,7 @@ export default function HomeScreen() {
           paddingTop: 9,
           paddingBottom: Platform.OS == "ios" ? 34 : 9,
         },
-        tabBarIcon: () => {
+        tabBarIcon: ({ focused }) => {
           let iconName;
           switch (route.name) {
             case "Posts":
@@ -79,7 +78,7 @@ export default function HomeScreen() {
               break;
           }
 
-          return route.name === "CreatePosts" ? (
+          return focused ? (
             <TouchableOpacity
               onPress={() => navigation.navigate(route.name)}
               style={styles.iconTab}

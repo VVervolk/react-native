@@ -38,7 +38,7 @@ export default function RegistrationScreen() {
     dispatch({ type: "reset" });
     navigation.reset({
       index: 0,
-      routes: [{ name: "Home" }],
+      routes: [{ name: "BottomNavіgator" }],
     });
   };
 
@@ -114,14 +114,11 @@ export default function RegistrationScreen() {
                   </Form>
                 </KeyboardAvoidingView>
                 <SubmitButton onPress={onReg}>Зареєстуватися</SubmitButton>
-                <Pressable style={styles.loginLink}>
-                  <Text style={styles.loginLinkText}>Вже є акаунт?</Text>
-                  <Text
-                    onPress={() => navigation.navigate("Login")}
-                    style={styles.loginLinkText}
-                  >
-                    Увійти
-                  </Text>
+                <Pressable
+                  style={styles.loginLink}
+                  onPress={() => navigation.navigate("Login")}
+                >
+                  <Text style={styles.loginLinkText}>Вже є акаунт? Увійти</Text>
                 </Pressable>
               </View>
             </View>
@@ -170,7 +167,6 @@ export const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-    gap: 4,
   },
 
   loginLinkText: {

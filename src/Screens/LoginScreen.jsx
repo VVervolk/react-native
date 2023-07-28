@@ -36,7 +36,7 @@ export default function LoginScreen() {
     dispatch({ type: "reset" });
     navigation.reset({
       index: 0,
-      routes: [{ name: "Home" }],
+      routes: [{ name: "BottomNavіgator" }],
     });
   };
 
@@ -94,14 +94,16 @@ export default function LoginScreen() {
               </KeyboardAvoidingView>
 
               <SubmitButton onPress={onLog}>Увійти</SubmitButton>
-              <Pressable style={styles.loginLink}>
+              <Pressable
+                style={[styles.loginLink, { gap: 4 }]}
+                onPress={() => navigation.navigate("Registration")}
+              >
                 <Text style={styles.loginLinkText}>Немає акаунту?</Text>
                 <Text
                   style={[
                     styles.loginLinkText,
                     loginStyles.loginLinkTextUnderline,
                   ]}
-                  onPress={() => navigation.navigate("Registration")}
                 >
                   Зареєструватися
                 </Text>

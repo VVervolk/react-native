@@ -10,11 +10,12 @@ import {
 import { KeyboardAvoidingView } from "react-native";
 import { TouchableWithoutFeedback } from "react-native";
 import { MaterialIcons, Feather } from "@expo/vector-icons";
-import { useReducer } from "react";
-import Example from "../../images/example.jpg";
-import { ImageBackground } from "react-native";
+import { useEffect, useReducer, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import addPostReducer from "../../reducers/addPostReducer";
+import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
+import * as Location from "expo-location";
 
 export default function CreatePostsScreen() {
   const [state, dispatch] = useReducer(addPostReducer, {
@@ -22,58 +23,89 @@ export default function CreatePostsScreen() {
     location: "",
     photo: null,
   });
-
   const navigation = useNavigation();
+  const [hasPermission, setHasPermission] = useState(null);
+  const [cameraRef, setCameraRef] = useState(null);
+  const [type, setType] = useState(Camera.Constants.Type.back);
+  const [location, setLocation] = useState(null);
 
-  const onSubmit = () => {
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync();
+
+      setHasPermission(status === "granted");
+    })();
+  }, []);
+
+  if (hasPermission === null) {
+    return <View />;
+  }
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
+
+  async function onSubmit() {
     console.log(state);
+    await getLocation();
     dispatch({ type: "reset" });
     navigation.navigate("Posts");
-  };
+  }
 
+  async function getLocation() {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      console.log("Permission to access location was denied");
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    const coords = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+    setLocation(coords);
+  }
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={stylesCreatePost.container}>
         <View>
-          <View style={stylesCreatePost.addPictureZone}>
-            <TouchableOpacity
-              onPress={() => dispatch({ type: "add_photo", photo: Example })}
-            >
-              {state.photo ? (
-                <ImageBackground
-                  source={state.photo}
-                  style={stylesCreatePost.addPictureBtn}
-                >
-                  <MaterialIcons
-                    style={[
-                      stylesCreatePost.icon,
-                      {
-                        backgroundColor: "rgba(255, 255, 255, 0.3)",
-                      },
-                    ]}
-                    name="photo-camera"
-                    size={20}
-                    color={state.photo ? "#FFFFFF" : "#BDBDBD"}
-                  />
-                </ImageBackground>
-              ) : (
-                <View
-                  style={[
-                    stylesCreatePost.addPictureBtn,
-                    { backgroundColor: "#F6F6F6" },
-                  ]}
-                >
-                  <MaterialIcons
-                    style={stylesCreatePost.icon}
-                    name="photo-camera"
-                    size={20}
-                    color={state.photo ? "#FFFFFF" : "#BDBDBD"}
-                  />
-                </View>
-              )}
-            </TouchableOpacity>
-            <Text style={stylesCreatePost.text}>Завантажте фото</Text>
-          </View>
+          <Camera
+            type={type}
+            ref={setCameraRef}
+            style={stylesCreatePost.camera}
+          >
+            <View style={stylesCreatePost.photoView}>
+              <TouchableOpacity
+                style={stylesCreatePost.flipContainer}
+                onPress={() => {
+                  setType(
+                    type === Camera.Constants.Type.back
+                      ? Camera.Constants.Type.front
+                      : Camera.Constants.Type.back
+                  );
+                }}
+              >
+                <Text style={{ fontSize: 18, color: "white" }}>Flip</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={stylesCreatePost.takePhotoButton}
+                onPress={async () => {
+                  if (cameraRef) {
+                    const { uri } = await cameraRef.takePictureAsync();
+                    await MediaLibrary.createAssetAsync(uri);
+                  }
+                }}
+              >
+                <MaterialIcons
+                  style={stylesCreatePost.icon}
+                  name="photo-camera"
+                  size={20}
+                  color={"#BDBDBD"}
+                />
+              </TouchableOpacity>
+            </View>
+          </Camera>
+          <Text style={stylesCreatePost.text}>Завантажте фото</Text>
           <KeyboardAvoidingView
             behavior={Platform.OS == "ios" ? "padding" : "height"}
           >
@@ -109,6 +141,7 @@ export default function CreatePostsScreen() {
             </View>
           </KeyboardAvoidingView>
           <Pressable
+            disabled={state.title && state.location ? false : true}
             style={[
               stylesCreatePost.submitButton,
               state.photo &&
@@ -150,20 +183,31 @@ export const stylesCreatePost = StyleSheet.create({
     paddingBottom: 34,
     justifyContent: "space-between",
   },
-  addPictureZone: {
-    marginBottom: 32,
-  },
-  addPictureBtn: {
-    backgroundColor: "#E8E8E8",
+  camera: {
     width: "100%",
     height: 240,
+    marginBottom: 8,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
+  },
+  photoView: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "transparent",
+    justifyContent: "center",
+  },
+  flipContainer: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+  },
+  takePhotoButton: {
+    alignSelf: "center",
   },
   icon: {
     padding: 18,
     borderRadius: 30,
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
   },
   text: {
     fontSize: 16,

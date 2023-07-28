@@ -1,10 +1,4 @@
-import {
-  Platform,
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import Background from "../../components/Background";
 import Title from "../../components/Title";
@@ -12,7 +6,6 @@ import { useNavigation } from "@react-navigation/native";
 import Container from "../../components/Container";
 import { styles } from "../RegistrationScreen";
 import { StyleSheet } from "react-native";
-import { FlatList } from "react-native";
 import Post from "../../components/Post";
 
 const DATA = [
@@ -55,9 +48,11 @@ export default function RegistrationScreen() {
             </Pressable>
 
             <Title>Natali Romanova</Title>
-            {DATA.length === 1
-              ? "No posts yet"
-              : DATA.map((item) => <Post key={item.id} />)}
+            <View style={stylesProfile.postBox}>
+              {DATA.length === 1
+                ? "No posts yet"
+                : DATA.map((item) => <Post key={item.id} />)}
+            </View>
           </View>
         </ScrollView>
       </Background>
@@ -70,5 +65,9 @@ export const stylesProfile = StyleSheet.create({
     position: "absolute",
     top: 22,
     right: 16,
+  },
+  postBox: {
+    width: "100%",
+    gap: 32,
   },
 });
