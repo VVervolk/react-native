@@ -24,9 +24,9 @@ export default function CommentsScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
         <Image source={Example} style={styles.image} />
-        {/* <FlatList/> */}
+        <View></View>
 
         <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -53,7 +53,7 @@ export default function CommentsScreen() {
             </Pressable>
           </View>
         </KeyboardAvoidingView>
-      </ScrollView>
+      </View>
     </TouchableWithoutFeedback>
   );
 }
@@ -65,6 +65,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingBottom: 16,
     paddingTop: 32,
+    justifyContent: "space-between",
   },
   image: {
     width: "100%",

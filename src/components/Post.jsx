@@ -26,10 +26,13 @@ export default function Post() {
             <Text>153</Text>
           </Pressable>
         </View>
-        <View style={styles.locationBox}>
+        <Pressable
+          onPress={() => navigation.navigate("Map")}
+          style={styles.locationBox}
+        >
           <SimpleLineIcons name="location-pin" size={24} color="#BDBDBD" />
           <Text style={styles.locationText}>Ukraine</Text>
-        </View>
+        </Pressable>
       </View>
     </View>
   );

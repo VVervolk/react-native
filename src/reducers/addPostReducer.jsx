@@ -12,6 +12,12 @@ export default function reducer(state, action) {
         title: action.title,
       };
     }
+    case "add_place": {
+      return {
+        ...state,
+        place: action.place,
+      };
+    }
     case "add_location": {
       return {
         ...state,
@@ -20,9 +26,12 @@ export default function reducer(state, action) {
     }
     case "reset": {
       return {
-        photo: null,
+        photo: "",
         title: "",
+        place: "",
         location: "",
+        comments: [],
+        likes: 0,
       };
     }
     default: {

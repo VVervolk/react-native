@@ -22,7 +22,11 @@ export default function BottomNavіgator() {
       backBehavior="none"
       screenOptions={({ route }) => ({
         headerLeft: () => {
-          if (route.name === "CreatePosts" || route.name === "Comments") {
+          if (
+            route.name === "CreatePosts" ||
+            route.name === "Comments" ||
+            route.name === "Map"
+          ) {
             return (
               <Pressable
                 style={{ marginLeft: 16 }}
@@ -127,6 +131,17 @@ export default function BottomNavіgator() {
         component={CommentsScreen}
         options={() => ({
           title: "Коментарі",
+          tabBarButton: () => null,
+          tabBarStyle: {
+            display: "none",
+          },
+        })}
+      />
+      <Tabs.Screen
+        name="Map"
+        component={MapScreen}
+        options={() => ({
+          title: "Мапа",
           tabBarButton: () => null,
           tabBarStyle: {
             display: "none",

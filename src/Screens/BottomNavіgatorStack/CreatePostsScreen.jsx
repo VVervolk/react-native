@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ImageBackground,
 } from "react-native";
 import { KeyboardAvoidingView } from "react-native";
 import { TouchableWithoutFeedback } from "react-native";
@@ -20,14 +21,16 @@ import * as Location from "expo-location";
 export default function CreatePostsScreen() {
   const [state, dispatch] = useReducer(addPostReducer, {
     title: "",
+    place: "",
+    photo: "",
     location: "",
-    photo: null,
+    comments: [],
+    likes: 0,
   });
   const navigation = useNavigation();
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
-  const [location, setLocation] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -46,10 +49,10 @@ export default function CreatePostsScreen() {
   }
 
   async function onSubmit() {
-    console.log(state);
     await getLocation();
     dispatch({ type: "reset" });
     navigation.navigate("Posts");
+    console.log(state);
   }
 
   async function getLocation() {
@@ -63,51 +66,63 @@ export default function CreatePostsScreen() {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
     };
-    setLocation(coords);
+    dispatch({ type: "add_location", location: coords });
   }
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={stylesCreatePost.container}>
-        <View>
-          <Camera
-            type={type}
-            ref={setCameraRef}
-            style={stylesCreatePost.camera}
-          >
-            <View style={stylesCreatePost.photoView}>
-              <TouchableOpacity
-                style={stylesCreatePost.flipContainer}
-                onPress={() => {
-                  setType(
-                    type === Camera.Constants.Type.back
-                      ? Camera.Constants.Type.front
-                      : Camera.Constants.Type.back
-                  );
-                }}
+        <View style={stylesCreatePost.box}>
+          <View style={stylesCreatePost.cameraBox}>
+            {state.photo ? (
+              <ImageBackground
+                style={stylesCreatePost.userPhoto}
+                source={{ uri: state.photo }}
+              />
+            ) : (
+              <Camera
+                type={type}
+                ref={setCameraRef}
+                style={stylesCreatePost.camera}
               >
-                <Text style={{ fontSize: 18, color: "white" }}>Flip</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={stylesCreatePost.takePhotoButton}
-                onPress={async () => {
-                  if (cameraRef) {
-                    const { uri } = await cameraRef.takePictureAsync();
-                    await MediaLibrary.createAssetAsync(uri);
-                  }
-                }}
-              >
-                <MaterialIcons
-                  style={stylesCreatePost.icon}
-                  name="photo-camera"
-                  size={20}
-                  color={"#BDBDBD"}
-                />
-              </TouchableOpacity>
-            </View>
-          </Camera>
+                <View style={stylesCreatePost.photoView}>
+                  <TouchableOpacity
+                    style={stylesCreatePost.flipContainer}
+                    onPress={() => {
+                      setType(
+                        type === Camera.Constants.Type.back
+                          ? Camera.Constants.Type.front
+                          : Camera.Constants.Type.back
+                      );
+                    }}
+                  >
+                    <Text style={{ fontSize: 18, color: "white" }}>Flip</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={stylesCreatePost.takePhotoButton}
+                    onPress={async () => {
+                      if (cameraRef) {
+                        const { uri } = await cameraRef.takePictureAsync();
+                        await MediaLibrary.createAssetAsync(uri);
+                        dispatch({ type: "add_photo", photo: uri });
+                      }
+                    }}
+                  >
+                    <MaterialIcons
+                      style={stylesCreatePost.icon}
+                      name="photo-camera"
+                      size={20}
+                      color={"#BDBDBD"}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </Camera>
+            )}
+          </View>
           <Text style={stylesCreatePost.text}>Завантажте фото</Text>
           <KeyboardAvoidingView
             behavior={Platform.OS == "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={20}
           >
             <View style={stylesCreatePost.form}>
               <TextInput
@@ -132,21 +147,21 @@ export default function CreatePostsScreen() {
                   inputMode="text"
                   placeholder="Місцевість..."
                   placeholderTextColor="#BDBDBD"
-                  value={state.location}
+                  value={state.place}
                   onChangeText={(e) =>
-                    dispatch({ type: "add_location", location: e })
+                    dispatch({ type: "add_place", place: e })
                   }
                 />
               </View>
             </View>
           </KeyboardAvoidingView>
           <Pressable
-            disabled={state.title && state.location ? false : true}
+            disabled={state.photo && state.title && state.place ? false : true}
             style={[
               stylesCreatePost.submitButton,
               state.photo &&
                 state.title &&
-                state.location && { backgroundColor: "#FF6C00" },
+                state.place && { backgroundColor: "#FF6C00" },
             ]}
             onPress={onSubmit}
           >
@@ -155,7 +170,7 @@ export default function CreatePostsScreen() {
                 stylesCreatePost.submitButtonText,
                 state.photo &&
                   state.title &&
-                  state.location && { color: "#FFFFFF" },
+                  state.place && { color: "#FFFFFF" },
               ]}
             >
               Опублікувати
@@ -183,12 +198,23 @@ export const stylesCreatePost = StyleSheet.create({
     paddingBottom: 34,
     justifyContent: "space-between",
   },
-  camera: {
+
+  userPhoto: {
     width: "100%",
     height: 240,
-    marginBottom: 8,
+  },
+  camera: {
+    display: "flex",
+    width: "100%",
+    height: 240,
     alignItems: "center",
     justifyContent: "center",
+    overflow: "hidden",
+  },
+  cameraBox: {
+    overflow: "hidden",
+    borderRadius: 8,
+    marginBottom: 8,
   },
   photoView: {
     flex: 1,
@@ -203,8 +229,6 @@ export const stylesCreatePost = StyleSheet.create({
   },
   takePhotoButton: {
     alignSelf: "center",
-  },
-  icon: {
     padding: 18,
     borderRadius: 30,
     backgroundColor: "rgba(255, 255, 255, 0.3)",
