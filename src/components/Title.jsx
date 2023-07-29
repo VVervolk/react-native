@@ -11,7 +11,6 @@ const styles = StyleSheet.create({
     lineHeight: 35,
     fontWeight: 500,
     textAlign: "center",
-    fontFamily: "Roboto",
     marginBottom: 32,
   },
 });

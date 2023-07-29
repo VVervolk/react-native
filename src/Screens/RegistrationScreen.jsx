@@ -179,7 +179,6 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: "#1B4371",
     textAlign: "center",
-    fontFamily: "Roboto",
   },
   interlayer: {
     flex: 1,

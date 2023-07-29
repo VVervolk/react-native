@@ -31,6 +31,7 @@ export default function CreatePostsScreen() {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -49,11 +50,16 @@ export default function CreatePostsScreen() {
   }
 
   async function onSubmit() {
-    await getLocation();
-    dispatch({ type: "reset" });
-    navigation.navigate("Posts");
-    console.log(state);
+    try {
+      setIsLoading(true);
+      await getLocation();
+      console.log(state);
+      dispatch({ type: "reset" });
+      navigation.navigate("Posts");
+      setIsLoading(false);
+    } catch (error) {}
   }
+  // console.log(state);
 
   async function getLocation() {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -61,130 +67,137 @@ export default function CreatePostsScreen() {
       console.log("Permission to access location was denied");
     }
 
-    let location = await Location.getCurrentPositionAsync({});
+    let loc = await Location.getCurrentPositionAsync({});
     const coords = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
+      latitude: loc.coords.latitude,
+      longitude: loc.coords.longitude,
     };
+    console.log(coords);
     dispatch({ type: "add_location", location: coords });
   }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={stylesCreatePost.container}>
-        <View style={stylesCreatePost.box}>
-          <View style={stylesCreatePost.cameraBox}>
-            {state.photo ? (
-              <ImageBackground
-                style={stylesCreatePost.userPhoto}
-                source={{ uri: state.photo }}
-              />
-            ) : (
-              <Camera
-                type={type}
-                ref={setCameraRef}
-                style={stylesCreatePost.camera}
-              >
-                <View style={stylesCreatePost.photoView}>
-                  <TouchableOpacity
-                    style={stylesCreatePost.flipContainer}
-                    onPress={() => {
-                      setType(
-                        type === Camera.Constants.Type.back
-                          ? Camera.Constants.Type.front
-                          : Camera.Constants.Type.back
-                      );
-                    }}
-                  >
-                    <Text style={{ fontSize: 18, color: "white" }}>Flip</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={stylesCreatePost.takePhotoButton}
-                    onPress={async () => {
-                      if (cameraRef) {
-                        const { uri } = await cameraRef.takePictureAsync();
-                        await MediaLibrary.createAssetAsync(uri);
-                        dispatch({ type: "add_photo", photo: uri });
-                      }
-                    }}
-                  >
-                    <MaterialIcons
-                      style={stylesCreatePost.icon}
-                      name="photo-camera"
-                      size={20}
-                      color={"#BDBDBD"}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </Camera>
-            )}
+        {isLoading ? (
+          <View style={stylesCreatePost.loading}>
+            <Text>Loading...</Text>
           </View>
-          <Text style={stylesCreatePost.text}>Завантажте фото</Text>
-          <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={20}
-          >
-            <View style={stylesCreatePost.form}>
-              <TextInput
-                style={stylesCreatePost.input}
-                inputMode="text"
-                placeholder="Назва..."
-                placeholderTextColor="#BDBDBD"
-                value={state.title}
-                onChangeText={(e) => dispatch({ type: "add_title", title: e })}
-              />
-
-              <View>
-                <Feather
-                  name="map-pin"
-                  size={24}
-                  color={"#BDBDBD"}
-                  style={stylesCreatePost.inputIcon}
+        ) : (
+          <>
+            <View style={stylesCreatePost.cameraBox}>
+              {state.photo ? (
+                <ImageBackground
+                  style={stylesCreatePost.userPhoto}
+                  source={{ uri: state.photo }}
                 />
-
+              ) : (
+                <Camera
+                  type={type}
+                  ref={setCameraRef}
+                  style={stylesCreatePost.camera}
+                >
+                  <View style={stylesCreatePost.photoView}>
+                    <TouchableOpacity
+                      style={stylesCreatePost.flipContainer}
+                      onPress={() => {
+                        setType(
+                          type === Camera.Constants.Type.back
+                            ? Camera.Constants.Type.front
+                            : Camera.Constants.Type.back
+                        );
+                      }}
+                    >
+                      <Text style={{ fontSize: 18, color: "white" }}>Flip</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={stylesCreatePost.takePhotoButton}
+                      onPress={async () => {
+                        if (cameraRef) {
+                          const { uri } = await cameraRef.takePictureAsync();
+                          await MediaLibrary.createAssetAsync(uri);
+                          dispatch({ type: "add_photo", photo: uri });
+                        }
+                      }}
+                    >
+                      <MaterialIcons
+                        style={stylesCreatePost.icon}
+                        name="photo-camera"
+                        size={20}
+                        color={"white"}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </Camera>
+              )}
+            </View>
+            <Text style={stylesCreatePost.text}>Завантажте фото</Text>
+            <KeyboardAvoidingView
+              style={{ flexGrow: 1 }}
+              behavior={Platform.OS == "ios" ? "padding" : "height"}
+            >
+              <View style={stylesCreatePost.form}>
                 <TextInput
-                  style={[stylesCreatePost.input, { paddingLeft: 28 }]}
+                  style={stylesCreatePost.input}
                   inputMode="text"
-                  placeholder="Місцевість..."
+                  placeholder="Назва..."
                   placeholderTextColor="#BDBDBD"
-                  value={state.place}
+                  value={state.title}
                   onChangeText={(e) =>
-                    dispatch({ type: "add_place", place: e })
+                    dispatch({ type: "add_title", title: e })
                   }
                 />
+
+                <View>
+                  <Feather
+                    name="map-pin"
+                    size={24}
+                    color={"#BDBDBD"}
+                    style={stylesCreatePost.inputIcon}
+                  />
+
+                  <TextInput
+                    style={[stylesCreatePost.input, { paddingLeft: 28 }]}
+                    inputMode="text"
+                    placeholder="Місцевість..."
+                    placeholderTextColor="#BDBDBD"
+                    value={state.place}
+                    onChangeText={(e) =>
+                      dispatch({ type: "add_place", place: e })
+                    }
+                  />
+                </View>
               </View>
-            </View>
-          </KeyboardAvoidingView>
-          <Pressable
-            disabled={state.photo && state.title && state.place ? false : true}
-            style={[
-              stylesCreatePost.submitButton,
-              state.photo &&
-                state.title &&
-                state.place && { backgroundColor: "#FF6C00" },
-            ]}
-            onPress={onSubmit}
-          >
-            <Text
-              style={[
-                stylesCreatePost.submitButtonText,
-                state.photo &&
-                  state.title &&
-                  state.place && { color: "#FFFFFF" },
-              ]}
-            >
-              Опублікувати
-            </Text>
-          </Pressable>
-        </View>
-        <Pressable
-          style={stylesCreatePost.deleteButton}
-          onPress={() => {
-            dispatch({ type: "reset" });
-          }}
-        >
-          <Feather name="trash-2" size={24} color={"#BDBDBD"} />
-        </Pressable>
+              <Pressable
+                disabled={state.photo ? false : true}
+                style={[
+                  stylesCreatePost.submitButton,
+                  state.photo && { backgroundColor: "#FF6C00" },
+                ]}
+                onPress={onSubmit}
+              >
+                <Text
+                  style={[
+                    stylesCreatePost.submitButtonText,
+                    state.photo && { color: "#FFFFFF" },
+                  ]}
+                >
+                  Опублікувати
+                </Text>
+              </Pressable>
+              <View style={{ flex: 1, justifyContent: "flex-end" }}>
+                <Pressable
+                  style={stylesCreatePost.deleteButton}
+                  onPress={() => {
+                    dispatch({ type: "reset" });
+                  }}
+                >
+                  <Feather name="trash-2" size={24} color={"#BDBDBD"} />
+                </Pressable>
+              </View>
+            </KeyboardAvoidingView>
+          </>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );
@@ -196,9 +209,14 @@ export const stylesCreatePost = StyleSheet.create({
     padding: 16,
     backgroundColor: "white",
     paddingBottom: 34,
-    justifyContent: "space-between",
   },
-
+  loading: {
+    display: "flex",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
   userPhoto: {
     width: "100%",
     height: 240,

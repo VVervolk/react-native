@@ -47,7 +47,6 @@ const styles = StyleSheet.create({
   submitButtonText: {
     fontSize: 16,
     textAlign: "center",
-    fontFamily: "Roboto",
     color: "white",
   },
   submitButtonTextPressed: {

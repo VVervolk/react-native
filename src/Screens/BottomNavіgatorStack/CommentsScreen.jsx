@@ -26,10 +26,10 @@ export default function CommentsScreen() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <Image source={Example} style={styles.image} />
-        <View></View>
-
+        <View style={{ flexGrow: 1 }}></View>
         <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
         >
           <View>
             <TextInput
@@ -72,6 +72,7 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
   },
   input: {
+    height: 50,
     fontSize: 16,
     fontWeight: "500",
     paddingVertical: 16,
@@ -82,15 +83,15 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E8E8E8",
   },
-  icon: {
-    borderRadius: 24,
-    padding: 10,
-
-    backgroundColor: "#FF6C00",
-  },
   submitButton: {
+    width: 34,
+    height: 34,
     position: "absolute",
     top: 8,
     right: 8,
+    borderRadius: 24,
+    backgroundColor: "#FF6C00",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

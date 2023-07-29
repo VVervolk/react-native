@@ -16,7 +16,6 @@ const styles = StyleSheet.create({
   },
   passwordButtonText: {
     color: "#1B4371",
-    fontFamily: "Roboto",
     fontSize: 16,
     lineHeight: 18.75,
   },
