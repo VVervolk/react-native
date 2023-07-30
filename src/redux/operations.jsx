@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { registerDB } from "../firebase/auth";
+import { loginDB, registerDB } from "../firebase/auth";
 
 export const registerUser = createAsyncThunk(
   "user/registerUser",
@@ -12,9 +12,9 @@ export const registerUser = createAsyncThunk(
 export const loginUser = createAsyncThunk(
   "user/loginUser",
   async (credentials, thunkAPI) => {
-    console.log(credentials);
+    console.log("oper", credentials);
     const response = await loginDB(credentials);
-    console.log(response.data);
+    console.log("oper after", response.data);
     return response.data;
   }
 );

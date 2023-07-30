@@ -33,18 +33,23 @@ export default function LoginScreen() {
     password: null,
   });
   const navigation = useNavigation();
-  // const dispatchSlice = useDispatch();
+  const dispatchSlice = useDispatch();
 
   async function onLog() {
     try {
-      // await dispatchSlice(loginUser(state));
+      // const data = await dispatchSlice(loginUser(state));
+      // console.log(data);
+      // if (data.error) {
+      //   throw new Error(`Oops, something went wrong`);
+      // }
       dispatch({ type: "reset" });
       navigation.reset({
         index: 0,
         routes: [{ name: "BottomNavіgator" }],
       });
-      console.log(state);
-    } catch (error) {}
+    } catch (error) {
+      console.error(`${error.name}: ${error.message}`);
+    }
   }
 
   // console.log(user?.email);

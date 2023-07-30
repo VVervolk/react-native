@@ -32,6 +32,13 @@ export default function CreatePostsScreen() {
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPhotoLoading, setIsPhotoLoading] = useState(false);
+
+  useEffect(() => {
+    if (state.location) {
+      console.log(state);
+    }
+  }, [state]);
 
   useEffect(() => {
     (async () => {
@@ -53,13 +60,12 @@ export default function CreatePostsScreen() {
     try {
       setIsLoading(true);
       await getLocation();
-      console.log(state);
+
       dispatch({ type: "reset" });
       navigation.navigate("Posts");
       setIsLoading(false);
     } catch (error) {}
   }
-  // console.log(state);
 
   async function getLocation() {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -112,11 +118,14 @@ export default function CreatePostsScreen() {
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={stylesCreatePost.takePhotoButton}
+                      disabled={isPhotoLoading ? true : false}
                       onPress={async () => {
                         if (cameraRef) {
+                          setIsPhotoLoading(true);
                           const { uri } = await cameraRef.takePictureAsync();
                           await MediaLibrary.createAssetAsync(uri);
                           dispatch({ type: "add_photo", photo: uri });
+                          setIsPhotoLoading(false);
                         }
                       }}
                     >
@@ -124,7 +133,7 @@ export default function CreatePostsScreen() {
                         style={stylesCreatePost.icon}
                         name="photo-camera"
                         size={20}
-                        color={"white"}
+                        color={isPhotoLoading ? "#BDBDBD" : "white"}
                       />
                     </TouchableOpacity>
                   </View>

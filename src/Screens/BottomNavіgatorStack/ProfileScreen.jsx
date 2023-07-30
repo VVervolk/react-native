@@ -33,7 +33,7 @@ export default function RegistrationScreen() {
   return (
     <Container>
       <Background>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View style={[styles.substrateRegister, { marginTop: 100 }]}>
             <View style={styles.avatar}>
               <Pressable style={styles.addAvatarButton}>

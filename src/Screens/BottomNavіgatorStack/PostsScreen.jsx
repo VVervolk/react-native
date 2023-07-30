@@ -50,7 +50,7 @@ export default function PostsScreen() {
   // console.log(userData);
   return (
     <>
-      <ScrollView style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
         {users.length !== 1 &&
           users.map((user) => <UserPosts key={user.id} user={user} />)}
       </ScrollView>

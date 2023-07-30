@@ -18,6 +18,7 @@ const authStateChanged = async (onChange = () => {}) => {
 export const loginDB = async ({ email, password }) => {
   try {
     const credentials = await signInWithEmailAndPassword(auth, email, password);
+    console.log("credentials", credentials.user.email);
     return credentials.user;
   } catch (error) {
     console.error(error);

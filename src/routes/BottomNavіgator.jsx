@@ -117,6 +117,7 @@ export default function BottomNavіgator() {
           tabBarStyle: {
             display: "none",
           },
+          unmountOnBlur: true,
         })}
         name="CreatePosts"
         component={CreatePostsScreen}
