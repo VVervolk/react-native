@@ -32,21 +32,23 @@ export default function LoginScreen() {
     email: null,
     password: null,
   });
+  const [isLogIn, setIsLogIn] = useState(false);
   const navigation = useNavigation();
   const dispatchSlice = useDispatch();
 
   async function onLog() {
     try {
-      // const data = await dispatchSlice(loginUser(state));
-      // console.log(data);
-      // if (data.error) {
-      //   throw new Error(`Oops, something went wrong`);
-      // }
+      setIsLogIn(true);
+      const data = await dispatchSlice(loginUser(state));
+      if (data.error) {
+        return;
+      }
       dispatch({ type: "reset" });
       navigation.reset({
         index: 0,
         routes: [{ name: "BottomNavіgator" }],
       });
+      setIsLogIn(false);
     } catch (error) {
       console.error(`${error.name}: ${error.message}`);
     }
@@ -66,6 +68,7 @@ export default function LoginScreen() {
               >
                 <Form>
                   <TextInput
+                    readOnly={isLogIn}
                     value={state.email}
                     onChangeText={(e) =>
                       dispatch({ type: "input_email", email: e })
@@ -82,6 +85,7 @@ export default function LoginScreen() {
 
                   <View>
                     <TextInput
+                      readOnly={isLogIn}
                       value={state.password}
                       onChangeText={(e) =>
                         dispatch({ type: "input_password", password: e })
@@ -107,8 +111,11 @@ export default function LoginScreen() {
                 </Form>
               </KeyboardAvoidingView>
 
-              <SubmitButton onPress={onLog}>Увійти</SubmitButton>
+              <SubmitButton isLogIn={isLogIn} onPress={onLog}>
+                Увійти
+              </SubmitButton>
               <Pressable
+                disabled={isLogIn}
                 style={[styles.loginLink, { gap: 4 }]}
                 onPress={() => navigation.navigate("Registration")}
               >

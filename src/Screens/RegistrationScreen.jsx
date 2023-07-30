@@ -29,22 +29,28 @@ export default function RegistrationScreen() {
   const [isFocusedPass, setIsFocusedPass] = useState(false);
   const [shouldHide, setShouldHide] = useState(true);
   const [state, dispatch] = useReducer(formReducer, {
-    login: null,
-    email: null,
-    password: null,
+    login: "",
+    email: "",
+    password: "",
   });
+  const [isLogIn, setIsLogIn] = useState(false);
   const navigation = useNavigation();
   const dispatchSlice = useDispatch();
 
   async function onReg() {
     try {
-      // await dispatchSlice(registerUser(state));
+      setIsLogIn(true);
+      const data = await dispatchSlice(registerUser(state));
+      if (data.error) {
+        console.log(data.error);
+        return;
+      }
       dispatch({ type: "reset" });
       navigation.reset({
         index: 0,
         routes: [{ name: "BottomNavіgator" }],
       });
-      console.log(state);
+      setIsLogIn(false);
     } catch (error) {}
   }
 
@@ -66,6 +72,7 @@ export default function RegistrationScreen() {
                 >
                   <Form>
                     <TextInput
+                      readOnly={isLogIn}
                       value={state.login}
                       onChangeText={(e) =>
                         dispatch({ type: "input_login", login: e })
@@ -80,6 +87,7 @@ export default function RegistrationScreen() {
                       onBlur={() => setIsFocusedLogin(false)}
                     />
                     <TextInput
+                      readOnly={isLogIn}
                       value={state.email}
                       onChangeText={(e) =>
                         dispatch({ type: "input_email", email: e })
@@ -95,6 +103,7 @@ export default function RegistrationScreen() {
                     />
                     <View>
                       <TextInput
+                        readOnly={isLogIn}
                         value={state.password}
                         onChangeText={(e) =>
                           dispatch({ type: "input_password", password: e })
@@ -119,8 +128,11 @@ export default function RegistrationScreen() {
                     </View>
                   </Form>
                 </KeyboardAvoidingView>
-                <SubmitButton onPress={onReg}>Зареєстуватися</SubmitButton>
+                <SubmitButton isLogIn={isLogIn} onPress={onReg}>
+                  Зареєстуватися
+                </SubmitButton>
                 <Pressable
+                  disabled={isLogIn}
                   style={styles.loginLink}
                   onPress={() => navigation.navigate("Login")}
                 >
