@@ -5,13 +5,14 @@ import { Pressable } from "react-native";
 import Example from "../images/example.jpg";
 import { useNavigation } from "@react-navigation/native";
 
-export default function Post() {
+export default function Post({ data }) {
   const navigation = useNavigation();
+  const { comments, likes, location, photo, place, title } = data;
 
   return (
     <View style={styles.box}>
-      <Image style={styles.image} source={Example} />
-      <Text style={styles.title}>Ліс</Text>
+      <Image style={styles.image} source={{ uri: photo }} />
+      <Text style={styles.title}>{title}</Text>
       <View style={styles.buttonsBox}>
         <View style={styles.activityBox}>
           <Pressable
@@ -19,19 +20,19 @@ export default function Post() {
             onPress={() => navigation.navigate("Comments")}
           >
             <Feather name="message-circle" size={24} color="#FF6C00" />
-            <Text>8</Text>
+            <Text>{comments.length}</Text>
           </Pressable>
           <Pressable style={styles.button}>
             <AntDesign name="like2" size={24} color="#FF6C00" />
-            <Text>153</Text>
+            <Text>{likes}</Text>
           </Pressable>
         </View>
         <Pressable
-          onPress={() => navigation.navigate("Map")}
+          onPress={() => navigation.navigate("Map", { location })}
           style={styles.locationBox}
         >
           <SimpleLineIcons name="location-pin" size={24} color="#BDBDBD" />
-          <Text style={styles.locationText}>Ukraine</Text>
+          <Text style={styles.locationText}>{place}</Text>
         </Pressable>
       </View>
     </View>

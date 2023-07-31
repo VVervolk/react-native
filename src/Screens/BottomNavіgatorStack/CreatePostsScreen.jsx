@@ -17,6 +17,9 @@ import addPostReducer from "../../reducers/addPostReducer";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
+import { addNewPost } from "../../redux/operations";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "../../redux/selectors";
 
 export default function CreatePostsScreen() {
   const [state, dispatch] = useReducer(addPostReducer, {
@@ -33,12 +36,8 @@ export default function CreatePostsScreen() {
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [isLoading, setIsLoading] = useState(false);
   const [isPhotoLoading, setIsPhotoLoading] = useState(false);
-
-  useEffect(() => {
-    if (state.location) {
-      console.log(state);
-    }
-  }, [state]);
+  const dispatchSlice = useDispatch();
+  const { email } = useSelector(selectUser);
 
   useEffect(() => {
     (async () => {
@@ -47,6 +46,7 @@ export default function CreatePostsScreen() {
 
       setHasPermission(status === "granted");
     })();
+    getLocation();
   }, []);
 
   if (hasPermission === null) {
@@ -59,8 +59,7 @@ export default function CreatePostsScreen() {
   async function onSubmit() {
     try {
       setIsLoading(true);
-      await getLocation();
-
+      dispatchSlice(addNewPost({ state, email }));
       dispatch({ type: "reset" });
       navigation.navigate("Posts");
       setIsLoading(false);
@@ -78,7 +77,6 @@ export default function CreatePostsScreen() {
       latitude: loc.coords.latitude,
       longitude: loc.coords.longitude,
     };
-    console.log(coords);
     dispatch({ type: "add_location", location: coords });
   }
 

@@ -5,20 +5,20 @@ import User from "../images/user.jpg";
 import { Text } from "react-native";
 import Post from "./Post";
 
-export default function UserPosts({ user }) {
-  const { data, posts } = user;
+export default function UserPosts({ user, posts }) {
+  const { email, name } = user;
   return (
     <View style={styles.container}>
       <View style={styles.user}>
         <Image style={styles.image} source={User} />
         <View style={styles.userData}>
-          <Text style={styles.name}>{data.name && data.name}</Text>
-          <Text style={styles.email}>{data.email && data.email}</Text>
+          <Text style={styles.name}>{name && name}</Text>
+          <Text style={styles.email}>{email && email}</Text>
         </View>
       </View>
       <View style={styles.postsContainer}>
         {posts.map((item) => (
-          <Post key={item.id}></Post>
+          <Post data={item} key={item.id}></Post>
         ))}
       </View>
     </View>

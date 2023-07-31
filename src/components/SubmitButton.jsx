@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 
-export default function SubmitButton({ children, onPress }) {
+export default function SubmitButton({ children, onPress, isLogIn }) {
   const [isPressed, setIsPressed] = useState(false);
 
   return (
     <Pressable
+      disabled={isLogIn}
       style={({ pressed }) => [
         styles.submitButton,
-        pressed && styles.submitButtonPressed,
+        (isLogIn || pressed) && styles.submitButtonPressed,
       ]}
       onPressIn={() => {
         setIsPressed(true);
@@ -21,10 +22,10 @@ export default function SubmitButton({ children, onPress }) {
       <Text
         style={[
           styles.submitButtonText,
-          isPressed && styles.submitButtonTextPressed,
+          (isLogIn || isPressed) && styles.submitButtonTextPressed,
         ]}
       >
-        {children}
+        {isLogIn ? "Входимо..." : children}
       </Text>
     </Pressable>
   );

@@ -10,11 +10,14 @@ import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { Pressable } from "react-native";
 import { Platform } from "react-native";
+import { logOutUser } from "../redux/operations";
+import { useDispatch } from "react-redux";
 
 const Tabs = createBottomTabNavigator();
 
 export default function BottomNavіgator() {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   return (
     <Tabs.Navigator
@@ -49,7 +52,10 @@ export default function BottomNavіgator() {
             return (
               <Pressable
                 style={{ marginRight: 16 }}
-                onPress={() => navigation.navigate("Login")}
+                onPress={async () => {
+                  await dispatch(logOutUser());
+                  navigation.navigate("Login");
+                }}
               >
                 <MaterialIcons name="logout" size={25} color="#BDBDBD" />
               </Pressable>
@@ -107,6 +113,7 @@ export default function BottomNavіgator() {
       <Tabs.Screen
         options={() => ({
           title: "Публікації",
+          unmountOnBlur: true,
         })}
         name="Posts"
         component={PostsScreen}
@@ -123,7 +130,10 @@ export default function BottomNavіgator() {
         component={CreatePostsScreen}
       />
       <Tabs.Screen
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          unmountOnBlur: true,
+        }}
         name="Profile"
         component={ProfileScreen}
       />
@@ -136,6 +146,7 @@ export default function BottomNavіgator() {
           tabBarStyle: {
             display: "none",
           },
+          unmountOnBlur: true,
         })}
       />
       <Tabs.Screen
@@ -147,6 +158,7 @@ export default function BottomNavіgator() {
           tabBarStyle: {
             display: "none",
           },
+          unmountOnBlur: true,
         })}
       />
     </Tabs.Navigator>
