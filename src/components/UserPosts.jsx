@@ -17,9 +17,11 @@ export default function UserPosts({ user, posts }) {
         </View>
       </View>
       <View style={styles.postsContainer}>
-        {posts.map((item) => (
-          <Post data={item} key={item.id}></Post>
-        ))}
+        {posts.length !== 0 ? (
+          posts.map((item) => <Post data={item} key={item.id}></Post>)
+        ) : (
+          <Text style={styles.noPosts}>No posts yet</Text>
+        )}
       </View>
     </View>
   );
@@ -52,5 +54,9 @@ const styles = StyleSheet.create({
   },
   postsContainer: {
     gap: 32,
+  },
+  noPosts: {
+    fontSize: 18,
+    fontWeight: 700,
   },
 });

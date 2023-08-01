@@ -27,7 +27,13 @@ export default function CreatePostsScreen() {
     place: "",
     photo: "",
     location: "",
-    comments: [],
+    comments: [
+      {
+        email: "blablabla@gmail.com",
+        text: "Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!",
+        time: "Tue Aug 01 2020 08:28:22 GMT+0000",
+      },
+    ],
     likes: 0,
   });
   const navigation = useNavigation();
@@ -94,7 +100,34 @@ export default function CreatePostsScreen() {
                 <ImageBackground
                   style={stylesCreatePost.userPhoto}
                   source={{ uri: state.photo }}
-                />
+                >
+                  <TouchableOpacity
+                    style={[
+                      stylesCreatePost.takePhotoButton,
+                      { backgroundColor: "rgba(255, 0, 0, 0.6)" },
+                    ]}
+                    disabled={isPhotoLoading ? true : false}
+                    onPress={() => {
+                      setIsPhotoLoading(true);
+                      dispatch({
+                        type: "add_photo",
+                        photo: "",
+                      });
+                      setIsPhotoLoading(false);
+                    }}
+                  >
+                    {isPhotoLoading ? (
+                      <Text>Loading...</Text>
+                    ) : (
+                      <Feather
+                        name="trash-2"
+                        style={stylesCreatePost.icon}
+                        size={20}
+                        color={isPhotoLoading ? "#BDBDBD" : "white"}
+                      />
+                    )}
+                  </TouchableOpacity>
+                </ImageBackground>
               ) : (
                 <Camera
                   type={type}
@@ -127,12 +160,16 @@ export default function CreatePostsScreen() {
                         }
                       }}
                     >
-                      <MaterialIcons
-                        style={stylesCreatePost.icon}
-                        name="photo-camera"
-                        size={20}
-                        color={isPhotoLoading ? "#BDBDBD" : "white"}
-                      />
+                      {isPhotoLoading ? (
+                        <Text>Loading...</Text>
+                      ) : (
+                        <MaterialIcons
+                          style={stylesCreatePost.icon}
+                          name="photo-camera"
+                          size={20}
+                          color={isPhotoLoading ? "#BDBDBD" : "white"}
+                        />
+                      )}
                     </TouchableOpacity>
                   </View>
                 </Camera>
@@ -227,6 +264,8 @@ export const stylesCreatePost = StyleSheet.create({
   userPhoto: {
     width: "100%",
     height: 240,
+    alignItems: "center",
+    justifyContent: "center",
   },
   camera: {
     display: "flex",

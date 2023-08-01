@@ -11,22 +11,53 @@ import {
   ScrollView,
   FlatList,
 } from "react-native";
-import Example from "../../images/example.jpg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { addCommentOnPost } from "../../redux/operations";
+import { selectUser } from "../../redux/selectors";
+import Comment from "../../components/Comment";
+import { getNewComments } from "../../firebase/firestore";
 
 export default function CommentsScreen() {
   const [newComment, setNewComment] = useState(null);
+  const dispatch = useDispatch();
+  const { email } = useSelector(selectUser);
+  const {
+    params: { photo, comments, id },
+  } = useRoute();
+
+  const [postComments, setPostComments] = useState([]);
+
+  useEffect(() => {
+    setPostComments(comments);
+  }, []);
 
   function sendNewComment() {
+    dispatch(addCommentOnPost({ email, id, newComment }));
+    setPostComments((state) => {
+      return [
+        ...state,
+        { text: newComment, time: new Date().toString(), email },
+      ];
+    });
     setNewComment("");
   }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <Image source={Example} style={styles.image} />
-        <View style={{ flexGrow: 1 }}></View>
+        <Image source={{ uri: photo }} style={styles.image} />
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.comments}
+          data={postComments}
+          renderItem={({ item }) => (
+            <Comment userEmail={email} comment={item} />
+          )}
+          keyExtractor={({ item }) => Math.random()}
+        />
         <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
           keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
@@ -44,12 +75,7 @@ export default function CommentsScreen() {
               style={styles.submitButton}
               onPress={() => sendNewComment()}
             >
-              <AntDesign
-                style={styles.icon}
-                name="arrowup"
-                size={24}
-                color="#FFFFFF"
-              />
+              <AntDesign name="arrowup" size={24} color="#FFFFFF" />
             </Pressable>
           </View>
         </KeyboardAvoidingView>
@@ -70,6 +96,7 @@ export const styles = StyleSheet.create({
   image: {
     width: "100%",
     borderRadius: 8,
+    height: 240,
   },
   input: {
     height: 50,
@@ -93,5 +120,11 @@ export const styles = StyleSheet.create({
     backgroundColor: "#FF6C00",
     alignItems: "center",
     justifyContent: "center",
+  },
+  comments: {
+    width: "100%",
+    justifyContent: "flex-start",
+    paddingVertical: 32,
+    gap: 24,
   },
 });

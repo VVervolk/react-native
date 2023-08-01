@@ -12,6 +12,7 @@ import { selectPosts, selectUser } from "../../redux/selectors";
 import UserPosts from "../../components/UserPosts";
 import { useEffect } from "react";
 import { getUserPosts } from "../../redux/operations";
+import { Text } from "react-native";
 
 export default function RegistrationScreen() {
   const navigation = useNavigation();
@@ -30,8 +31,21 @@ export default function RegistrationScreen() {
   return (
     <Container>
       <Background>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={[styles.substrateRegister, { marginTop: 100 }]}>
+        <ScrollView
+          contentContainerStyle={{
+            flex: posts.length > 1 ? 0 : 1,
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          <View
+            style={[
+              styles.substrateRegister,
+              {
+                marginTop: 150,
+                flex: 1,
+              },
+            ]}
+          >
             <View style={styles.avatar}>
               <Pressable style={styles.addAvatarButton}>
                 <Feather name="x-circle" size={25} color="#BDBDBD" />
@@ -46,9 +60,11 @@ export default function RegistrationScreen() {
 
             <Title>{user.name}</Title>
             <View style={stylesProfile.postBox}>
-              {posts.map((item) => (
-                <Post data={item} key={item.id}></Post>
-              ))}
+              {posts.length !== 0 ? (
+                posts.map((item) => <Post data={item} key={item.id}></Post>)
+              ) : (
+                <Text style={stylesProfile.noPosts}>No posts yet</Text>
+              )}
             </View>
           </View>
         </ScrollView>
@@ -66,5 +82,9 @@ export const stylesProfile = StyleSheet.create({
   postBox: {
     width: "100%",
     gap: 32,
+  },
+  noPosts: {
+    fontSize: 18,
+    fontWeight: 700,
   },
 });

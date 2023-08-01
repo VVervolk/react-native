@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 
 export default function Post({ data }) {
   const navigation = useNavigation();
-  const { comments, likes, location, photo, place, title } = data;
+  const { comments, likes, location, photo, place, title, id } = data;
 
   return (
     <View style={styles.box}>
@@ -17,7 +17,9 @@ export default function Post({ data }) {
         <View style={styles.activityBox}>
           <Pressable
             style={styles.button}
-            onPress={() => navigation.navigate("Comments")}
+            onPress={() =>
+              navigation.navigate("Comments", { photo, comments, id })
+            }
           >
             <Feather name="message-circle" size={24} color="#FF6C00" />
             <Text>{comments.length}</Text>
