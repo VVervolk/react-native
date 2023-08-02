@@ -1,34 +1,29 @@
 import { Text } from "react-native";
 import { Image, StyleSheet, View } from "react-native";
-import { Feather, AntDesign, SimpleLineIcons } from "@expo/vector-icons";
+import { Feather, SimpleLineIcons } from "@expo/vector-icons";
 import { Pressable } from "react-native";
-import Example from "../images/example.jpg";
 import { useNavigation } from "@react-navigation/native";
 
-export default function Post({ data }) {
+export default function Post({ data, ownerEmail }) {
   const navigation = useNavigation();
-  const { comments, likes, location, photo, place, title, id } = data;
+  const { comments, location, photo, place, title, id } = data;
+
+  console.log(data);
 
   return (
     <View style={styles.box}>
       <Image style={styles.image} source={{ uri: photo }} />
       <Text style={styles.title}>{title}</Text>
       <View style={styles.buttonsBox}>
-        <View style={styles.activityBox}>
-          <Pressable
-            style={styles.button}
-            onPress={() =>
-              navigation.navigate("Comments", { photo, comments, id })
-            }
-          >
-            <Feather name="message-circle" size={24} color="#FF6C00" />
-            <Text>{comments.length}</Text>
-          </Pressable>
-          <Pressable style={styles.button}>
-            <AntDesign name="like2" size={24} color="#FF6C00" />
-            <Text>{likes}</Text>
-          </Pressable>
-        </View>
+        <Pressable
+          style={styles.button}
+          onPress={() =>
+            navigation.navigate("Comments", { ownerEmail, photo, comments, id })
+          }
+        >
+          <Feather name="message-circle" size={24} color="#FF6C00" />
+          <Text>{comments.length}</Text>
+        </Pressable>
         <Pressable
           onPress={() => navigation.navigate("Map", { location })}
           style={styles.locationBox}
@@ -64,12 +59,7 @@ const styles = StyleSheet.create({
     gap: 6,
     alignItems: "center",
   },
-  activityBox: {
-    display: "flex",
-    flexDirection: "row",
-    gap: 24,
-    alignItems: "center",
-  },
+
   buttonsBox: {
     display: "flex",
     flexDirection: "row",

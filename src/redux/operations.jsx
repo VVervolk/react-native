@@ -37,16 +37,15 @@ export const addNewPost = createAsyncThunk(
   "user/addNewPost",
   async (data, thunkAPI) => {
     const response = await addPost(data);
-    const post = { ...data.state, id: response };
 
-    return post;
+    return data.state;
   }
 );
 
 export const getUserPosts = createAsyncThunk(
   "user/getUserPosts",
-  async (email, thunkAPI) => {
-    const response = await getPosts(email);
+  async (_, thunkAPI) => {
+    const response = await getPosts();
 
     return response;
   }

@@ -25,7 +25,7 @@ export default function CommentsScreen() {
   const dispatch = useDispatch();
   const { email } = useSelector(selectUser);
   const {
-    params: { photo, comments, id },
+    params: { ownerEmail, photo, comments, id },
   } = useRoute();
 
   const [postComments, setPostComments] = useState([]);
@@ -35,7 +35,9 @@ export default function CommentsScreen() {
   }, []);
 
   function sendNewComment() {
-    dispatch(addCommentOnPost({ email, id, newComment }));
+    dispatch(
+      addCommentOnPost({ ownerEmail, userEmail: email, id, newComment })
+    );
     setPostComments((state) => {
       return [
         ...state,

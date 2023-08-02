@@ -6,6 +6,8 @@ import {
   signOut,
 } from "firebase/auth";
 import { auth } from "./config";
+import { Alert } from "react-native";
+import { initArray } from "./firestore";
 
 /**
  * Функция для регистрации
@@ -18,24 +20,24 @@ export async function registerDB({ email, password, login }) {
     if (data && login) {
       await addUserName(login);
     }
+    initArray(email, login);
     return data.user;
   } catch (error) {
-    console.log(error);
     switch (error.code) {
       case "auth/email-already-in-use":
-        console.error("Oops, this email is already used");
+        Alert.alert("Error", "Oops, this email is already used");
         break;
 
       case "auth/invalid-email":
-        console.error("Oops, this email address is not valid");
+        Alert.alert("Error", "Oops, this email address is not valid");
         break;
 
       case "auth/weak-password":
-        console.error("Oops, your password isn`t strong enough");
+        Alert.alert("Error", "Oops, your password isn`t strong enough");
         break;
 
       default:
-        console.error("Oops, something went wrong");
+        Alert.alert("Error", "Oops, something went wrong");
         break;
     }
   }
@@ -57,22 +59,20 @@ export const loginDB = async ({ email, password }) => {
     const credentials = await signInWithEmailAndPassword(auth, email, password);
     return credentials.user;
   } catch (error) {
-    console.log(error.code);
     switch (error.code) {
       case "auth/user-not-found":
-        console.error("Oops, user with this email not found");
+        Alert.alert("Error", "Oops, user with this email not found");
         break;
-
       case "auth/wrong-password":
-        console.error("Oops, wrong password");
+        Alert.alert("Error", "Oops, wrong credentials");
         break;
 
       case "auth/too-many-requests":
-        console.error("Oops, too many requests");
+        Alert.alert("Error", "Oops, too many requests");
         break;
 
       default:
-        console.error("Oops, something went wrong");
+        Alert.alert("Error", "Oops, something went wrong");
         break;
     }
   }

@@ -1,4 +1,5 @@
 import {
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -39,6 +40,10 @@ export default function RegistrationScreen() {
 
   async function onReg() {
     try {
+      if (!state.email || !state.password) {
+        Alert.alert("Error", "Put down all credentials");
+        return;
+      }
       setIsLogIn(true);
       const data = await dispatchSlice(registerUser(state));
       if (data.error) {

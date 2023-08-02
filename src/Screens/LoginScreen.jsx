@@ -1,4 +1,5 @@
 import {
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -22,7 +23,6 @@ import { useNavigation } from "@react-navigation/native";
 import toggleHidePassword from "../helpers/toggleHidePassword";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../redux/operations";
-import { user } from "../firebase/auth";
 
 export default function LoginScreen() {
   const [isFocusedEmail, setIsFocusedEmail] = useState(false);
@@ -38,9 +38,15 @@ export default function LoginScreen() {
 
   async function onLog() {
     try {
+      if (!state.email || !state.password) {
+        Alert.alert("Error", "Put down all credentials");
+        return;
+      }
       setIsLogIn(true);
       const data = await dispatchSlice(loginUser(state));
       if (data.error) {
+        console.log(data.error);
+        setIsLogIn(false);
         return;
       }
       dispatch({ type: "reset" });
@@ -53,8 +59,6 @@ export default function LoginScreen() {
       console.error(`${error.name}: ${error.message}`);
     }
   }
-
-  // console.log(user?.email);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

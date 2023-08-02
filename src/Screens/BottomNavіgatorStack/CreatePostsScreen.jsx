@@ -22,19 +22,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../../redux/selectors";
 
 export default function CreatePostsScreen() {
+  const { email } = useSelector(selectUser);
   const [state, dispatch] = useReducer(addPostReducer, {
     title: "",
     place: "",
     photo: "",
     location: "",
-    comments: [
-      {
-        email: "blablabla@gmail.com",
-        text: "Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!",
-        time: "Tue Aug 01 2020 08:28:22 GMT+0000",
-      },
-    ],
-    likes: 0,
+    comments: [],
+    id: Math.random() * 50,
   });
   const navigation = useNavigation();
   const [hasPermission, setHasPermission] = useState(null);
@@ -43,7 +38,6 @@ export default function CreatePostsScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [isPhotoLoading, setIsPhotoLoading] = useState(false);
   const dispatchSlice = useDispatch();
-  const { email } = useSelector(selectUser);
 
   useEffect(() => {
     (async () => {
@@ -61,7 +55,6 @@ export default function CreatePostsScreen() {
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
-
   async function onSubmit() {
     try {
       setIsLoading(true);

@@ -7,16 +7,17 @@ import { useEffect } from "react";
 import { getUserPosts } from "../../redux/operations";
 
 export default function PostsScreen() {
-  const user = useSelector(selectUser);
   const posts = useSelector(selectPosts);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getUserPosts(user.email));
+    dispatch(getUserPosts());
   }, []);
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-      <UserPosts posts={posts} user={user} />
+      {posts.map(({ posts, user }) => (
+        <UserPosts posts={posts} user={user} />
+      ))}
     </ScrollView>
   );
 }
@@ -27,6 +28,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 32,
     backgroundColor: "white",
-    paddingBottom: 34,
   },
 });

@@ -10,30 +10,40 @@ import Post from "../../components/Post";
 import { useDispatch, useSelector } from "react-redux";
 import { selectPosts, selectUser } from "../../redux/selectors";
 import UserPosts from "../../components/UserPosts";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getUserPosts } from "../../redux/operations";
 import { Text } from "react-native";
+import { getPostsUser } from "../../firebase/firestore";
 
 export default function RegistrationScreen() {
   const navigation = useNavigation();
-  const user = useSelector(selectUser);
-  const posts = useSelector(selectPosts);
-  const dispatch = useDispatch();
+  const { name, email } = useSelector(selectUser);
+  const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    dispatch(getUserPosts(user.email));
+    fetchUser();
   }, []);
 
   const onLogOut = () => {
     navigation.navigate("Login");
   };
 
+  async function fetchUser() {
+    try {
+      setIsLoading(true);
+      const data = await getPostsUser(email);
+      setPosts(data);
+      setIsLoading(false);
+    } catch (error) {}
+  }
+
   return (
     <Container>
       <Background>
         <ScrollView
           contentContainerStyle={{
-            flex: posts.length > 1 ? 0 : 1,
+            flexGrow: 1,
           }}
           showsVerticalScrollIndicator={false}
         >
@@ -58,14 +68,20 @@ export default function RegistrationScreen() {
               <MaterialIcons name="logout" size={25} color="#BDBDBD" />
             </Pressable>
 
-            <Title>{user.name}</Title>
-            <View style={stylesProfile.postBox}>
-              {posts.length !== 0 ? (
-                posts.map((item) => <Post data={item} key={item.id}></Post>)
-              ) : (
-                <Text style={stylesProfile.noPosts}>No posts yet</Text>
-              )}
-            </View>
+            <Title>{name}</Title>
+            {isLoading ? (
+              <Text style={stylesProfile.noPosts}>Loading...</Text>
+            ) : (
+              <View style={stylesProfile.postBox}>
+                {posts.length !== 0 ? (
+                  posts.map((item) => (
+                    <Post ownerEmail={email} data={item} key={item.id}></Post>
+                  ))
+                ) : (
+                  <Text style={stylesProfile.noPosts}>No posts yet</Text>
+                )}
+              </View>
+            )}
           </View>
         </ScrollView>
       </Background>
