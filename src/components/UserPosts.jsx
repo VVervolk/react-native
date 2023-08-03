@@ -3,8 +3,7 @@ import { View } from "react-native";
 import { Text } from "react-native";
 import Post from "./Post";
 
-export default function UserPosts({ user, posts }) {
-  const { name, email } = user;
+export default function UserPosts({ name, email, posts }) {
   return (
     <View style={styles.container}>
       <View style={styles.user}>

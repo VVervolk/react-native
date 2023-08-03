@@ -19,17 +19,19 @@ import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
 import { addNewPost } from "../../redux/operations";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../../redux/selectors";
+import { selectIsFetching, selectUser } from "../../redux/selectors";
 
 export default function CreatePostsScreen() {
-  const { email } = useSelector(selectUser);
+  const { email, name } = useSelector(selectUser);
+  const isFetching = useSelector(selectIsFetching);
   const [state, dispatch] = useReducer(addPostReducer, {
     title: "",
     place: "",
     photo: "",
     location: "",
     comments: [],
-    id: Math.random() * 50,
+    name,
+    email,
   });
   const navigation = useNavigation();
   const [hasPermission, setHasPermission] = useState(null);
@@ -55,14 +57,20 @@ export default function CreatePostsScreen() {
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
+
   async function onSubmit() {
-    try {
-      setIsLoading(true);
-      dispatchSlice(addNewPost({ state, email }));
-      dispatch({ type: "reset" });
-      navigation.navigate("Posts");
-      setIsLoading(false);
-    } catch (error) {}
+    setIsLoading(true);
+    dispatchSlice(addNewPost(state))
+      .then(() => {
+        dispatch({ type: "reset" });
+        navigation.navigate("Posts");
+      })
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   async function getLocation() {

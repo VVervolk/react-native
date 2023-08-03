@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addCommentOnPost } from "../../redux/operations";
 import { selectUser } from "../../redux/selectors";
 import Comment from "../../components/Comment";
-import { getNewComments } from "../../firebase/firestore";
+import { getNewComments, subscribeOnComments } from "../../firebase/firestore";
 
 export default function CommentsScreen() {
   const [newComment, setNewComment] = useState(null);
@@ -28,22 +28,23 @@ export default function CommentsScreen() {
     params: { ownerEmail, photo, comments, id },
   } = useRoute();
 
-  const [postComments, setPostComments] = useState([]);
+  // const [postComments, setPostComments] = useState([]);
 
   useEffect(() => {
-    setPostComments(comments);
+    const c = subscribeOnComments(id);
+    console.log(object);
+
+    // setPostComments(comments);
   }, []);
 
   function sendNewComment() {
-    dispatch(
-      addCommentOnPost({ ownerEmail, userEmail: email, id, newComment })
-    );
-    setPostComments((state) => {
-      return [
-        ...state,
-        { text: newComment, time: new Date().toString(), email },
-      ];
-    });
+    dispatch(addCommentOnPost({ userEmail: email, id, newComment }));
+    // setPostComments((state) => {
+    //   return [
+    //     ...state,
+    //     { text: newComment, time: new Date().toString(), email },
+    //   ];
+    // });
     setNewComment("");
   }
 
@@ -54,7 +55,7 @@ export default function CommentsScreen() {
         <FlatList
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.comments}
-          data={postComments}
+          data={comments}
           renderItem={({ item }) => (
             <Comment userEmail={email} comment={item} />
           )}

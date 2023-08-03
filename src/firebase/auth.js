@@ -20,7 +20,6 @@ export async function registerDB({ email, password, login }) {
     if (data && login) {
       await addUserName(login);
     }
-    initArray(email, login);
     return data.user;
   } catch (error) {
     switch (error.code) {

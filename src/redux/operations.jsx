@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { logOut, loginDB, registerDB } from "../firebase/auth";
-import { addComment, addPost, getPosts } from "../firebase/firestore";
+import { addComment, addPost, getPostsFetch } from "../firebase/firestore";
 
 export const registerUser = createAsyncThunk(
   "user/registerUser",
@@ -38,14 +38,14 @@ export const addNewPost = createAsyncThunk(
   async (data, thunkAPI) => {
     const response = await addPost(data);
 
-    return data.state;
+    return { id: response, ...data };
   }
 );
 
-export const getUserPosts = createAsyncThunk(
-  "user/getUserPosts",
+export const getPosts = createAsyncThunk(
+  "user/getPosts",
   async (_, thunkAPI) => {
-    const response = await getPosts();
+    const response = await getPostsFetch();
 
     return response;
   }

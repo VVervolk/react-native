@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   addCommentOnPost,
   addNewPost,
-  getUserPosts,
+  getPosts,
   logOutUser,
   loginUser,
   registerUser,
@@ -27,10 +27,12 @@ const userSlice = createSlice({
         state.user.name = action.payload.login;
       })
       .addCase(logOutUser.fulfilled, (state, action) => {
-        state.user = initialState.user;
+        state = initialState;
       })
-      .addCase(addNewPost.fulfilled, (state, action) => {})
-      .addCase(getUserPosts.fulfilled, (state, action) => {
+      .addCase(addNewPost.fulfilled, (state, action) => {
+        state.posts.push(action.payload);
+      })
+      .addCase(getPosts.fulfilled, (state, action) => {
         state.posts = action.payload;
       })
       .addCase(addCommentOnPost.fulfilled, (state, action) => {});

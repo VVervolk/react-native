@@ -8,8 +8,6 @@ export default function Post({ data, ownerEmail }) {
   const navigation = useNavigation();
   const { comments, location, photo, place, title, id } = data;
 
-  console.log(data);
-
   return (
     <View style={styles.box}>
       <Image style={styles.image} source={{ uri: photo }} />
