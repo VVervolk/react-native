@@ -18,33 +18,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { addCommentOnPost } from "../../redux/operations";
 import { selectUser } from "../../redux/selectors";
 import Comment from "../../components/Comment";
-import { getNewComments, subscribeOnComments } from "../../firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebase/config";
 
 export default function CommentsScreen() {
   const [newComment, setNewComment] = useState(null);
   const dispatch = useDispatch();
   const { email } = useSelector(selectUser);
   const {
-    params: { ownerEmail, photo, comments, id },
+    params: { ownerEmail, photo, id },
   } = useRoute();
 
-  // const [postComments, setPostComments] = useState([]);
+  const [postComments, setPostComments] = useState([]);
 
-  useEffect(() => {
-    const c = subscribeOnComments(id);
-    console.log(object);
-
-    // setPostComments(comments);
-  }, []);
+  useEffect(
+    () =>
+      onSnapshot(doc(db, "posts", `${id}`), (doc) => {
+        setPostComments(doc.data().comments);
+      }),
+    []
+  );
 
   function sendNewComment() {
     dispatch(addCommentOnPost({ userEmail: email, id, newComment }));
-    // setPostComments((state) => {
-    //   return [
-    //     ...state,
-    //     { text: newComment, time: new Date().toString(), email },
-    //   ];
-    // });
     setNewComment("");
   }
 
@@ -55,9 +51,13 @@ export default function CommentsScreen() {
         <FlatList
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.comments}
-          data={comments}
+          data={postComments}
           renderItem={({ item }) => (
-            <Comment userEmail={email} comment={item} />
+            <Comment
+              postOwner={ownerEmail}
+              currentUser={email}
+              comment={item}
+            />
           )}
           keyExtractor={({ item }) => Math.random()}
         />
@@ -125,8 +125,9 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   comments: {
+    flexGrow: 1,
     width: "100%",
-    justifyContent: "flex-start",
+    justifyContent: "flex-end",
     paddingVertical: 32,
     gap: 24,
   },

@@ -4,9 +4,9 @@ import { StyleSheet } from "react-native";
 import User from "../images/user.jpg";
 import { Image } from "react-native";
 
-export default function Comment({ comment, userEmail }) {
-  const { text, time, email } = comment;
-  const owner = userEmail === email;
+export default function Comment({ comment, currentUser, postOwner }) {
+  const { text, time, userEmail } = comment;
+  const owner = currentUser === postOwner;
 
   const date = new Date(time).toDateString();
 
@@ -19,20 +19,16 @@ export default function Comment({ comment, userEmail }) {
         },
       ]}
     >
-      {owner ? (
-        <Image style={styles.icon} source={User} />
-      ) : (
-        <View
-          style={[
-            styles.icon,
-            {
-              backgroundColor: "#FF6C00",
-            },
-          ]}
-        >
-          <AntDesign name="user" size={20} color="#FFFFFF" />
-        </View>
-      )}
+      <View
+        style={[
+          styles.icon,
+          {
+            backgroundColor: owner ? "#FF6C00" : "#afafaf",
+          },
+        ]}
+      >
+        <AntDesign name="user" size={20} color="#FFFFFF" />
+      </View>
 
       <View style={styles.comment}>
         <Text>{text}</Text>

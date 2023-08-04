@@ -18,25 +18,19 @@ import { getPostsUser } from "../../firebase/firestore";
 export default function RegistrationScreen() {
   const navigation = useNavigation();
   const { name, email } = useSelector(selectUser);
+  const postsAll = useSelector(selectPosts);
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    fetchUser();
+    setIsLoading(true);
+    setPosts(postsAll.filter((item) => item.email === email));
+    setIsLoading(false);
   }, []);
 
   const onLogOut = () => {
     navigation.navigate("Login");
   };
-
-  async function fetchUser() {
-    try {
-      setIsLoading(true);
-      const data = await getPostsUser(email);
-      setPosts(data);
-      setIsLoading(false);
-    } catch (error) {}
-  }
 
   return (
     <Container>
@@ -75,7 +69,11 @@ export default function RegistrationScreen() {
               <View style={stylesProfile.postBox}>
                 {posts.length !== 0 ? (
                   posts.map((item) => (
-                    <Post ownerEmail={email} data={item} key={item.id}></Post>
+                    <Post
+                      ownerEmail={item.email}
+                      data={item}
+                      key={item.id}
+                    ></Post>
                   ))
                 ) : (
                   <Text style={stylesProfile.noPosts}>No posts yet</Text>

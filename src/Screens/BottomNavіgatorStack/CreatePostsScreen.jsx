@@ -23,7 +23,6 @@ import { selectIsFetching, selectUser } from "../../redux/selectors";
 
 export default function CreatePostsScreen() {
   const { email, name } = useSelector(selectUser);
-  const isFetching = useSelector(selectIsFetching);
   const [state, dispatch] = useReducer(addPostReducer, {
     title: "",
     place: "",
@@ -39,16 +38,19 @@ export default function CreatePostsScreen() {
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [isLoading, setIsLoading] = useState(false);
   const [isPhotoLoading, setIsPhotoLoading] = useState(false);
+  const [isScreenLoading, setIsScreenLoading] = useState(false);
   const dispatchSlice = useDispatch();
 
   useEffect(() => {
     (async () => {
+      setIsScreenLoading(true);
       const { status } = await Camera.requestCameraPermissionsAsync();
       await MediaLibrary.requestPermissionsAsync();
 
       setHasPermission(status === "granted");
+      await getLocation();
+      setIsScreenLoading(false);
     })();
-    getLocation();
   }, []);
 
   if (hasPermission === null) {
@@ -97,7 +99,16 @@ export default function CreatePostsScreen() {
         ) : (
           <>
             <View style={stylesCreatePost.cameraBox}>
-              {state.photo ? (
+              {isScreenLoading ? (
+                <View
+                  style={[
+                    stylesCreatePost.userPhoto,
+                    { backgroundColor: "#bdbdbd" },
+                  ]}
+                >
+                  <Text>Loading camera...</Text>
+                </View>
+              ) : state.photo ? (
                 <ImageBackground
                   style={stylesCreatePost.userPhoto}
                   source={{ uri: state.photo }}

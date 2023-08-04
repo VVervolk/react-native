@@ -1,4 +1,5 @@
-import { db } from "./config";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { db, storage } from "./config";
 import {
   collection,
   getDocs,
@@ -6,15 +7,23 @@ import {
   updateDoc,
   arrayUnion,
   Timestamp,
-  setDoc,
   getDoc,
-  where,
   addDoc,
-  onSnapshot,
 } from "firebase/firestore";
+import * as ImagePicker from "expo-image-picker";
 
 export async function addPost(state) {
-  const data = await addDoc(collection(db, `posts`), state);
+  const response = await fetch(state.photo);
+  const blob = await response.blob();
+
+  const storageRef = ref(storage, `${state.email}_${Date.now()}`);
+  const uploadTask = await uploadBytesResumable(storageRef, blob);
+  const photo = await getDownloadURL(uploadTask.ref);
+  const data = await addDoc(collection(db, `posts`), {
+    ...state,
+    photo: photo,
+  });
+
   return data.id;
 }
 
@@ -55,17 +64,5 @@ export async function addComment({ id, userEmail, newComment }) {
       time: Timestamp.now().toDate().toString(),
       userEmail,
     }),
-  });
-}
-
-export async function subscribeOnComments(id) {
-  const unsub = await onSnapshot(doc(db, "posts", `${id}`), (doc) => {
-    const com = [];
-
-    const data = doc.data().comments;
-    data.forEach((item) => {
-      com.push(item);
-    });
-    return com;
   });
 }
