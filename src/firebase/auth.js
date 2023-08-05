@@ -7,7 +7,6 @@ import {
 } from "firebase/auth";
 import { auth } from "./config";
 import { Alert } from "react-native";
-import { initArray } from "./firestore";
 
 /**
  * Функция для регистрации
@@ -58,14 +57,17 @@ export const loginDB = async ({ email, password }) => {
     const credentials = await signInWithEmailAndPassword(auth, email, password);
     return credentials.user;
   } catch (error) {
+    console.log(error);
     switch (error.code) {
       case "auth/user-not-found":
-        Alert.alert("Error", "Oops, user with this email not found");
+        Alert.alert("Error", "Oops, wrong credentials");
         break;
       case "auth/wrong-password":
         Alert.alert("Error", "Oops, wrong credentials");
         break;
-
+      case "auth/invalid-email":
+        Alert.alert("Error", "Oops, email address isn`t valid");
+        break;
       case "auth/too-many-requests":
         Alert.alert("Error", "Oops, too many requests");
         break;
